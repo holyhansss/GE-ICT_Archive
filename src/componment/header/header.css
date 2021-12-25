@@ -1,0 +1,29 @@
+
+
+.header_wrap{
+    position: fixed;
+    width: 100%;
+    padding-top: 20px;
+}
+
+.header_name{
+    display: inline-flex;
+    margin-left: 50px;
+    font-size: 40px;
+    font-weight: bold;
+    width: 400px;
+    background-color: white;
+    color: black;
+    align-items: left;
+}
+
+.header_slogon{
+    display: inline-flex;
+    font-size: 40px;
+    font-weight: bold;
+    
+    width: 570px;
+    background-color: white;
+    color: black;
+    align-items: left;
+}

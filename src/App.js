@@ -1,24 +1,19 @@
-import logo from './logo.svg';
+import Header from './componment/header/header.js'
+import Contents from './componment/contents/contents.js'
 import './App.css';
+import {react, useState} from 'react';
 
 function App() {
+  const [year,setYear] = useState(2021);
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Header>hello</Header>
+      <Contents year={year}></Contents>
+      
+      
     </div>
+
   );
 }
 
