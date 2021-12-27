@@ -37,14 +37,16 @@ const HeaderContents = styled.div`
 // 로고
 const Logo = styled.div`
     flex: 1;
-    font-size: 1.4rem;
+    text-align: center;
+    font-size: 1.0rem;
     letter-spacing: 2px;
     color: ${oc.teal[7]};
     font-family: 'Rajdhani';
 `;
 const Slogan = styled.div`
     flex: 1;
-    font-size: 2.0rem;
+    text-align: center;
+    font-size: 1.5rem;
     font-weight: bold;
     letter-spacing: 2px;
     color: ${oc.teal[7]};
@@ -62,23 +64,15 @@ const GradientBorder = styled.div`
 `;
 
 
-// function Header() {
-//   return (
-//     <div className='header_wrap'>
-//       <div className='header_name'>GE & ICT CAPSTONE</div>
-//       <div className='header_slogon'>Createion beyond Technology</div>
-//     </div>
-//   );
-// }
-
 const Header = ({children}) => {
   return (
       <Positioner>
           <WhiteBackground>
               <HeaderContents>
-                  <Logo>GE & ICT CAPSTONE</Logo>
+                  <Logo>GE & ICT</Logo>
                   <Slogan>Createion beyond Technology</Slogan>
-                  <Spacer/>
+                  <Logo>CAPSTONE</Logo>
+                  {/* <Spacer/> */}
                   {/* {children} */}
               </HeaderContents>
           </WhiteBackground>
