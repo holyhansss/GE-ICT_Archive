@@ -55,6 +55,7 @@ const Slogan = styled.div`
 // 중간 여백
 const Spacer = styled.div`
   flex: 1;
+  text-align: right;
 `;
 
 // 하단 그래디언트 테두리
@@ -69,11 +70,12 @@ const Header = ({children}) => {
       <Positioner>
           <WhiteBackground>
               <HeaderContents>
-                  <Logo>GE & ICT</Logo>
+                  <Logo>GE & ICT CAPSTONE</Logo>
                   <Slogan>Createion beyond Technology</Slogan>
-                  <Logo>CAPSTONE</Logo>
-                  {/* <Spacer/> */}
-                  {/* {children} */}
+                  <Spacer>
+                  일단은 Logo로 대체 
+                  </Spacer>
+                  
               </HeaderContents>
           </WhiteBackground>
           <GradientBorder/>

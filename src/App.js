@@ -7,15 +7,6 @@ import { getFirestore, addDoc, collection } from "firebase/firestore";
 
 function App() {
   const [year, setYear] = useState(2021);
-  // const aa = async () => {
-  //   const db = getFirestore();
-  //   const docRef = await addDoc(collection(db, "users"), {
-  //     first: "Ada",
-  //     last: "Lovelace",
-  //     born: 1815
-  //   });
-  //   //firestore.collection("example").add({text: "꿀잠 자기", completed: true});
-  // }
 
   return (
     <div>
