@@ -64,6 +64,9 @@ const GradientBorder = styled.div`
     background: linear-gradient(to right, ${oc.teal[6]}, ${oc.cyan[5]});
 `;
 
+const LoginButton = styled.button`
+
+`;
 
 const Header = ({children}) => {
   return (
@@ -73,7 +76,7 @@ const Header = ({children}) => {
                   <Logo>GE & ICT CAPSTONE</Logo>
                   <Slogan>Createion beyond Technology</Slogan>
                   <Spacer>
-                  일단은 Logo로 대체 
+                  LoginButton 
                   </Spacer>
                   
               </HeaderContents>
