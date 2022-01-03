@@ -1,10 +1,12 @@
 import './header.css'
-import React from 'react';
+import {React, useState} from 'react';
 import styled from 'styled-components';
 import oc from 'open-color';
 //import { shadow, media } from 'lib/styleUtils';
+import LoginButton from '../auth/login';
+import LoginForm from '../auth/loginForm';
 
-// 상단 고정, 그림자
+// 상단 고정, 그림자    
 const Positioner = styled.div`
     display: flex;
     flex-direction: column;
@@ -64,24 +66,28 @@ const GradientBorder = styled.div`
     background: linear-gradient(to right, ${oc.teal[6]}, ${oc.cyan[5]});
 `;
 
-const LoginButton = styled.button`
 
-`;
 
-const Header = ({children}) => {
-  return (
+const Header = () => {
+    const [isShowLogin, setIsShowLogin] = useState(false);
+
+    const handleLoginClick = () => {
+        setIsShowLogin((isShowLogin) => !isShowLogin)
+        console.log(isShowLogin);
+    }
+
+    return (
       <Positioner>
           <WhiteBackground>
               <HeaderContents>
                   <Logo>GE & ICT CAPSTONE</Logo>
                   <Slogan>Createion beyond Technology</Slogan>
-                  <Spacer>
-                  LoginButton 
-                  </Spacer>
-                  
+                  <LoginButton handleLoginClick={handleLoginClick}></LoginButton>
               </HeaderContents>
           </WhiteBackground>
           <GradientBorder/>
+          <LoginForm isShowLogin={isShowLogin}></LoginForm>
+
       </Positioner>
   );
 };
