@@ -2,12 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import {configureStore} from "@reduxjs/toolkit";
+import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from 'react-redux';
-import loginReducer from './features/login_state';
+import authSlice from './features/login_state';
+
 const store = configureStore({
   reducer: {
-    loginState: loginReducer
+    authSlice: authSlice
   },
 });
 

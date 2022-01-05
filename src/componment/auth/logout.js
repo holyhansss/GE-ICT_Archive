@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import oc from 'open-color';
-import { useDispatch, useSelector } from "react-redux";
-import { login, logout } from "../../features/login_state"
+import { useSelector } from "react-redux";
+
 const LoginButtonText = styled.span`
     justify-content: center;
     font-weight: bolder;
@@ -28,20 +28,21 @@ const LoginButtondiv = styled.div`
     cursor: pointer;
 
     `
-const LoginButton = ({handleLoginClick}) => {
+const LogoutButton = ({handleLogoutClick}) => {
     const loginState = useSelector((state) => state.loginState);
 
     const handleClick = () => {
-        handleLoginClick()
+        handleLogoutClick()
+        console.log("signOut")
     }
     
     return (
          <LoginButtonCover>
             <LoginButtondiv onClick={handleClick}>
-                <LoginButtonText>Sign In</LoginButtonText>
+                <LoginButtonText>Sign Out</LoginButtonText>
             </LoginButtondiv>
          </LoginButtonCover>
     );
 
 }
-export default LoginButton;
+export default LogoutButton;

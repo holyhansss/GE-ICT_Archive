@@ -1,15 +1,15 @@
 import './header.css'
-import {React, useState} from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import oc from 'open-color';
 //import { shadow, media } from 'lib/styleUtils';
 import LoginButton from '../auth/login';
+import LogoutButton from '../auth/logout';
 // import LoginForm from '../auth/loginForm';
 import firebase from '../../firebase';
-import { getAuth, signInWithPopup, GoogleAuthProvider, signinwith} from "firebase/auth";
-import { isAsyncThunkAction } from '@reduxjs/toolkit';
-import { useDispatch } from 'react-redux';
-
+import { getAuth, signInWithPopup, GoogleAuthProvider, signinwith, signOut} from "firebase/auth";
+import { useDispatch, useSelector } from 'react-redux';
+import { login, logout } from "../../features/login_state"
 
 // 상단 고정, 그림자    
 const Positioner = styled.div`
@@ -74,18 +74,27 @@ const GradientBorder = styled.div`
 
 
 const Header = () => {
+    const [user, setUser] = useState(null);
+    const auth = getAuth();
+    //let user;
+    //const dispatch = useDispatch();
+    //const loginState = useSelector((state) => state.authSlice.loginState);
 
-    const handleLoginClick = () => {
-        var googleProvider = new GoogleAuthProvider;
-        const auth = getAuth();
-        signInWithPopup(auth, googleProvider)
-        .then((result)=> {
-            console.log(result);
-        })
-        .catch((err)=> {
-            console.log(err);
-        })
+
+    useEffect(()=> {
+
+    }, [user]);
+
+    const handleLoginClick = async () => {
+        let googleProvider = new GoogleAuthProvider;
+        await signInWithPopup(auth, googleProvider)
+        setUser(auth.currentUser)
     }
+    const handleLogoutClick = async () => {
+        await signOut(auth)
+        setUser(auth.currentUser)
+    }
+    console.log(auth.currentUser)
 
     return (
       <Positioner>
@@ -93,7 +102,10 @@ const Header = () => {
               <HeaderContents>
                   <Logo>GE & ICT CAPSTONE</Logo>
                   <Slogan>Createion beyond Technology</Slogan>
-                  <LoginButton handleLoginClick={handleLoginClick}></LoginButton>
+                    {auth.currentUser == null
+                    ? <LoginButton handleLoginClick={handleLoginClick}></LoginButton>
+                    : <LogoutButton handleLogoutClick={handleLogoutClick}></LogoutButton>
+                    }
               </HeaderContents>
           </WhiteBackground>
           <GradientBorder/>

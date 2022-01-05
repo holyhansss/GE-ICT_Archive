@@ -13,7 +13,6 @@ function App() {
       <Header></Header>
       <Contents year={year}></Contents>
       <Footer></Footer>
-      {/* <button onClick={aa}>aa</button> */}
     </div>
 
   );

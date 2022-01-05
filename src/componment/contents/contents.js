@@ -15,7 +15,7 @@ const Positioner = styled.div`
 const Content = styled.div`
     display: inline-flex;
     flex-direction: column;
-    background-color: blue;
+    background-color: white;
     margin: 1%;
     width: 27%;
     height: 350px;
@@ -74,7 +74,7 @@ const Contents = (props) => {
         
             <Positioner>
                 {list}
-                
+
             </Positioner>
         
     );
