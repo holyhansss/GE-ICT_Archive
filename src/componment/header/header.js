@@ -4,7 +4,12 @@ import styled from 'styled-components';
 import oc from 'open-color';
 //import { shadow, media } from 'lib/styleUtils';
 import LoginButton from '../auth/login';
-import LoginForm from '../auth/loginForm';
+// import LoginForm from '../auth/loginForm';
+import firebase from '../../firebase';
+import { getAuth, signInWithPopup, GoogleAuthProvider, signinwith} from "firebase/auth";
+import { isAsyncThunkAction } from '@reduxjs/toolkit';
+import { useDispatch } from 'react-redux';
+
 
 // 상단 고정, 그림자    
 const Positioner = styled.div`
@@ -69,11 +74,17 @@ const GradientBorder = styled.div`
 
 
 const Header = () => {
-    const [isShowLogin, setIsShowLogin] = useState(false);
 
     const handleLoginClick = () => {
-        setIsShowLogin((isShowLogin) => !isShowLogin)
-        console.log(isShowLogin);
+        var googleProvider = new GoogleAuthProvider;
+        const auth = getAuth();
+        signInWithPopup(auth, googleProvider)
+        .then((result)=> {
+            console.log(result);
+        })
+        .catch((err)=> {
+            console.log(err);
+        })
     }
 
     return (
@@ -86,8 +97,6 @@ const Header = () => {
               </HeaderContents>
           </WhiteBackground>
           <GradientBorder/>
-          <LoginForm isShowLogin={isShowLogin}></LoginForm>
-
       </Positioner>
   );
 };

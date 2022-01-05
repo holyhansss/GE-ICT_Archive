@@ -1,6 +1,8 @@
 
 import firebase from 'firebase/compat/app';
-import 'firebase/compat/analytics'
+import 'firebase/compat/analytics';
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -13,3 +15,4 @@ const firebaseConfig = {
 };
 
 export default firebase.initializeApp(firebaseConfig);
+export const gogoleProvider = new GoogleAuthProvider();

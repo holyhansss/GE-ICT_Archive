@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import oc from 'open-color';
+import { useSelector } from "react-redux";
 
 const LoginButtonText = styled.span`
     justify-content: center;
@@ -28,8 +29,10 @@ const LoginButtondiv = styled.div`
 
     `
 const LoginButton = ({handleLoginClick}) => {
+    const loginState = useSelector((state) => state.loginState);
 
     const handleClick = () => {
+        
         handleLoginClick()
     }
     

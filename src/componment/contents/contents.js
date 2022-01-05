@@ -1,9 +1,9 @@
-import  {React, useState, useEffect} from 'react';
+import  { React, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import oc from 'open-color';
-import {firebase} from "../../firebase";
-import { getFirestore, collection, getDocs, doc  } from "firebase/firestore";
-import {getStorage, getDownloadURL, StorageReference, FirebaseStorage} from "firebase/storage";
+import { firebase } from "../../firebase";
+import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { getStorage, getDownloadURL, StorageReference, FirebaseStorage } from "firebase/storage";
 
 const Positioner = styled.div`
     display: flex;
