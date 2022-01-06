@@ -1,20 +1,22 @@
-import {React, useState, useEffect} from 'react';
+import { React } from 'react';
 import Header from './componment/header/header.js';
 import Contents from './componment/contents/contents.js';
 import Footer from './componment/footer/footer.js';
-import {firebase} from "./firebase";
-import { getFirestore, addDoc, collection } from "firebase/firestore";
+import {BrowserRouter, Route, Routes } from "react-router-dom";
+import MainPage from './pages/mainPage';
+import DetailPage from './pages/detailedPage.js';
+import ProposalPage from './pages/proposalPage.js';
 
 function App() {
-  const [year, setYear] = useState(2021);
 
   return (
-    <div>
-      <Header></Header>
-      <Contents year={year}></Contents>
-      <Footer></Footer>
-    </div>
-
+    <BrowserRouter>
+      <Routes>
+        <Route exact path='/' element={<MainPage/>} ></Route>
+        <Route exact path='/DetailPage' element={<DetailPage/>} ></Route>
+        <Route exact path='/ProposalPage' element={<ProposalPage/>} ></Route>  
+      </Routes>
+    </BrowserRouter>
   );
 }
 

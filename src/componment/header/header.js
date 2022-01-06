@@ -2,14 +2,17 @@ import './header.css'
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import oc from 'open-color';
-//import { shadow, media } from 'lib/styleUtils';
 import LoginButton from '../auth/login';
 import LogoutButton from '../auth/logout';
-// import LoginForm from '../auth/loginForm';
+import ProposalCapstone from './proposalCapstone';
 import firebase from '../../firebase';
-import { getAuth, signInWithPopup, GoogleAuthProvider, signinwith, signOut} from "firebase/auth";
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut} from "firebase/auth";
 import { useDispatch, useSelector } from 'react-redux';
 import { login, logout } from "../../features/login_state"
+import { Link } from 'react-router-dom';
+
+//router쓰는 법!!
+//https://velog.io/@devstone/react-router-dom-%EC%9D%B4%ED%95%B4%ED%95%98%EA%B3%A0-%ED%99%9C%EC%9A%A9%ED%95%98%EA%B8%B0
 
 // 상단 고정, 그림자    
 const Positioner = styled.div`
@@ -71,14 +74,17 @@ const GradientBorder = styled.div`
     background: linear-gradient(to right, ${oc.teal[6]}, ${oc.cyan[5]});
 `;
 
+const LogoutAndProposal = styled.div`
+    display:flex;
+    flex-direction: row;
+    flex: 1;
+
+`
 
 
 const Header = () => {
     const [user, setUser] = useState(null);
     const auth = getAuth();
-    //let user;
-    //const dispatch = useDispatch();
-    //const loginState = useSelector((state) => state.authSlice.loginState);
 
 
     useEffect(()=> {
@@ -94,17 +100,21 @@ const Header = () => {
         await signOut(auth)
         setUser(auth.currentUser)
     }
-    console.log(auth.currentUser)
 
     return (
       <Positioner>
           <WhiteBackground>
               <HeaderContents>
                   <Logo>GE & ICT CAPSTONE</Logo>
-                  <Slogan>Createion beyond Technology</Slogan>
+                  <Link to="/" style={{ textDecoration: 'none' }}>
+                    <Slogan>Creation Beyond Technology</Slogan>
+                  </Link>
                     {auth.currentUser == null
-                    ? <LoginButton handleLoginClick={handleLoginClick}></LoginButton>
-                    : <LogoutButton handleLogoutClick={handleLogoutClick}></LogoutButton>
+                    ? <LoginButton handleLoginClick={handleLoginClick} />
+                    : <LogoutAndProposal>
+                        <ProposalCapstone/>
+                        <LogoutButton handleLogoutClick={handleLogoutClick} />
+                      </LogoutAndProposal>
                     }
               </HeaderContents>
           </WhiteBackground>
