@@ -7,8 +7,6 @@ import LogoutButton from '../auth/logout';
 import ProposalCapstone from './proposalCapstone';
 import firebase from '../../firebase';
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut} from "firebase/auth";
-import { useDispatch, useSelector } from 'react-redux';
-import { login, logout } from "../../features/login_state"
 import { Link } from 'react-router-dom';
 
 //router쓰는 법!!
@@ -85,7 +83,6 @@ const LogoutAndProposal = styled.div`
 const Header = () => {
     const [user, setUser] = useState(null);
     const auth = getAuth();
-
 
     useEffect(()=> {
 
