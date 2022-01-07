@@ -59,8 +59,18 @@ const Contents = ({ year }) => {
     const list = content.map((doc, index) => (
             <Content 
                 key={index} 
-                to={`/detailedPage/${index}`} 
-                onClick={() => {console.log(index)}}
+                to={{
+                    pathname: `/detailpages/${index}`,
+                    state: {
+                        id: index,
+                        contentInfo: doc,
+                    }
+                }}
+                state={{
+                    id: index,
+                    contentInfo: doc,
+                }}
+                // onClick={() => {console.log(index)}}
                 style={{ textDecoration: 'none' }}
             >
                 <MainImage src={doc.image_url}></MainImage>
