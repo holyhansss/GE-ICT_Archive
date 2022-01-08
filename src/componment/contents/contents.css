@@ -5,4 +5,9 @@
     .related-stories-wrap .component-list li:nth-child(3) {
         margin-right: 3.75%;
     }
+
+}
+
+body {
+    align-items: center;
 }

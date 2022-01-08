@@ -17,13 +17,14 @@ const Content = styled(Link)`
     flex-direction: column;
     background-color: orange;
     margin: 1%;
+    padding-bottom: 20px;
     width: 27%;
     height: 350px;
     color: black;
     &:nth-child(1),&:nth-child(2),&:nth-child(3) {
         margin-top: 100px;
     }
-`;
+`
 const MainImage = styled.img`
     flex: 3;
     max-height: 70%;
@@ -38,11 +39,13 @@ const TeamName = styled.div`
 `
 const TeamDesc = styled.div`
     flex:2;
+    margin-top: 5px;
     margin-left: 30px;
     margin-right: 30px;
     font-size: 13px;
+    overflow: clip;
+    text-overflow: ellipsis;     
 `
-
 const Contents = ({ year }) => {
     const [content, setContent] = useState([]);
 
@@ -57,26 +60,20 @@ const Contents = ({ year }) => {
     },[])
     
     const list = content.map((doc, index) => (
-            <Content 
-                key={index} 
-                to={{
-                    pathname: `/detailpages/${index}`,
-                    state: {
-                        id: index,
-                        contentInfo: doc,
-                    }
-                }}
-                state={{
-                    id: index,
-                    contentInfo: doc,
-                }}
-                // onClick={() => {console.log(index)}}
-                style={{ textDecoration: 'none' }}
-            >
-                <MainImage src={doc.image_url}></MainImage>
-                <TeamName>{doc.team_name}</TeamName>
-                <TeamDesc>Example team description... I need to fetch desc later!!! happy coding!!</TeamDesc>
-            </Content>
+        <Content 
+            key={index} 
+            to={`/detailpages/${index}`}
+            state={{
+                id: index,
+                contentInfo: doc,
+            }}
+            // onClick={() => {console.log(index)}}
+            style={{ textDecoration: 'none' }}
+        >
+            <MainImage src={doc.image_url}></MainImage>
+            <TeamName>{doc.team_name}</TeamName>
+            <TeamDesc>{doc.team_desc}</TeamDesc>
+        </Content>
     ));
     
     return (
