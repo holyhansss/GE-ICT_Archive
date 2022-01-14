@@ -5,7 +5,9 @@ import reportWebVitals from './reportWebVitals';
 import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from 'react-redux';
 import authSlice from './features/login_state';
-import { BrowserRouter } from 'react-router-dom';
+import { ThemeProvider, unstable_createMuiStrictModeTheme} from '@material-ui/core';
+
+const theme = unstable_createMuiStrictModeTheme();
 
 const store = configureStore({
   reducer: {
@@ -14,14 +16,13 @@ const store = configureStore({
 });
 
 ReactDOM.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      {/* <BrowserRouter> */}
-        <App />
-      {/* </BrowserRouter> */}
-    </Provider>
-
-  </React.StrictMode>,
+  <ThemeProvider theme={theme}>
+    <React.StrictMode>
+      <Provider store={store}>
+          <App />
+      </Provider>
+    </React.StrictMode>
+  </ThemeProvider>,
   document.getElementById('root')
 );
 
