@@ -1,7 +1,7 @@
 import {React, useState, useEffect} from 'react';
 import Header from '../componment/header/header.js';
 import Footer from '../componment/footer/footer.js';
-import { Typography, Button, TextField, Select, MenuItem, FormControl, InputLabel, makeStyles } from '@material-ui/core';
+import { Typography, Box, Button, TextField, Select, MenuItem, FormControl, InputLabel, makeStyles } from '@material-ui/core';
 import styled from 'styled-components';
 
 const useStyles = makeStyles({
@@ -19,7 +19,6 @@ const FormWrapper = styled.div`
 `
 const StyledForm = styled.form`
   width: 750px;
-  background: orange;
   text-align: center;
 
 `
@@ -31,6 +30,8 @@ function ProposalPage() {
   const [teamMember, setTeamMember] = useState('');
   const [teamDesc, setTeamDesc] = useState('');
   const [course, setCourse] = useState('');
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
 
   const [teamNameError, setTeamNameError] = useState(false);
   const [teamDescError, setTeamDescError] = useState(false);
@@ -60,6 +61,13 @@ function ProposalPage() {
     }
   }
 
+
+  useEffect(() => {
+    if (selectedImage) {
+      console.log(selectedImage)
+      setImageUrl(URL.createObjectURL(selectedImage));
+    }
+  }, [selectedImage]);
 
   return (
     <div>
@@ -94,6 +102,7 @@ function ProposalPage() {
           }}
           className={style.formElement}
           error={courseError}
+          required
         >
           <InputLabel id="course-lable">Course</InputLabel>
           <Select
@@ -146,6 +155,26 @@ function ProposalPage() {
           className={style.formElement}
 
         />
+        <>
+          <input
+            accept="image/*"
+            type="file"
+            id="select-image"
+            style={{ display: 'none' }}
+            onChange={e => setSelectedImage(e.target.files[0])}
+          />
+          <label htmlFor="select-image">
+            <Button variant="contained" color="primary" component="span">
+              Upload Image
+            </Button>
+          </label>
+          {imageUrl && selectedImage && (
+            <Box mt={2} textAlign="center">
+              <div>Image Preview:</div>
+              <img src={imageUrl} alt={selectedImage.name} height="300px" />
+            </Box>
+          )}
+        </>
         <Button
           type='submit'
           variant='contained'

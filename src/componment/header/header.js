@@ -19,13 +19,13 @@ const Positioner = styled.div`
     position: fixed;
     top: 0px;
     width: 100%;
-   
+    z-index: 2;
 `;
 
 // 흰 배경, 내용 중간 정렬
 const WhiteBackground = styled.div`
     background: white;
-    display: flex;
+    display: block;
     justify-content: left;
     height: 70px;
 `;
@@ -37,9 +37,6 @@ const HeaderContents = styled.div`
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding-right: 1rem;
-    padding-left: 1rem;
-    
 `;
 
 // 로고
