@@ -1,10 +1,35 @@
-import  { React, useState, useEffect } from 'react';
+import  { React, useState, useEffect, Children } from 'react';
 import styled from 'styled-components';
 import oc from 'open-color';
 import { firebase } from "../../firebase";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { getStorage, getDownloadURL, StorageReference, FirebaseStorage } from "firebase/storage";
 import { Link } from "react-router-dom";
+import { Card, CardHeader, CardContent, CardActions, makeStyles} from "@material-ui/core";
+
+const useStyles = makeStyles({
+    link: {
+        margin: '10px 0px 10px 0px',
+        width: '30%',
+        
+        maxHeight: '30%',
+        backgroundColor: 'orange',
+        "&:nth-child(1), &:nth-child(2), &:nth-child(3)": {
+            margin: '70px 0px 0px 0px',
+        },
+    },
+    card: {
+        textAlign: 'center',
+        wordWrap: "break-word"
+    },
+    
+    // card:nth-children(1): {
+        
+    // },
+    team_name: {
+        margin: '0px',
+    }
+});
 
 const Positioner = styled.div`
     display: flex;
@@ -27,8 +52,8 @@ const Content = styled(Link)`
 `
 const MainImage = styled.img`
     flex: 3;
-    max-height: 70%;
-    max-width: 100%;
+    max-height: 300px;
+    max-width: 400px;
     object-fit: contain;
 `
 const TeamName = styled.div`
@@ -44,9 +69,13 @@ const TeamDesc = styled.div`
     margin-right: 30px;
     font-size: 13px;
     overflow: clip;
-    text-overflow: ellipsis;     
+    text-overflow: ellipsis;
+    maxLine: 3;  
 `
 const Contents = ({ year }) => {
+
+    const style = useStyles();
+
     const [content, setContent] = useState([]);
 
     useEffect(() => {
@@ -60,20 +89,26 @@ const Contents = ({ year }) => {
     },[])
     
     const list = content.map((doc, index) => (
-        <Content 
-            key={index} 
-            to={`/detailpages/${index}`}
-            state={{
-                id: index,
-                contentInfo: doc,
-            }}
-            // onClick={() => {console.log(index)}}
-            style={{ textDecoration: 'none' }}
+        <Link key={index}
+        to={`/detailpages/${index}`}
+        state={{
+            id: index,
+            contentInfo: doc,
+        }}
+        className={style.link}
+        style={{ textDecoration: 'none' }}
         >
-            <MainImage src={doc.image_url}></MainImage>
-            <TeamName>{doc.team_name}</TeamName>
-            <TeamDesc>{doc.team_desc}</TeamDesc>
-        </Content>
+            <Card key={index} className={style.card} >
+                <CardContent>
+                    <MainImage src={doc.image_url}></MainImage>
+                </CardContent>
+                <CardHeader title={doc.team_name} className={style.team_name}></CardHeader>
+                {/* <CardContent>
+                    <TeamDesc>{doc.team_desc}</TeamDesc>
+                </CardContent> */}
+                
+            </Card>
+        </Link>
     ));
     
     return (
