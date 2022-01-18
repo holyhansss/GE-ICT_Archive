@@ -30,3 +30,5 @@ yarn-error.log*
 firestore.rules
 storage.rules
 firebase.json
+database.rules.json
+firestore.indexes.json
