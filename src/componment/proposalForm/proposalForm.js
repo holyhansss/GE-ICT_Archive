@@ -32,6 +32,7 @@ const CreateInputMember = styled.div`
 
 function ProposalForm() {
   const courseList=['제기개', '캡스톤 GE', '캡스톤 ICT'];
+  const [semesters, setSemesters] = useState(['2022-1','2021-2','2021-1','2020-2','2020-1','2019-2','2019-1']);
 
   const [teamName, setTeamName] = useState('');
   const [teamMembers, setTeamMembers] = useState([
@@ -48,13 +49,14 @@ function ProposalForm() {
   const [course, setCourse] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
+  const [selectedSemester, setSelectedSemester] = useState('');
 
   const [teamNameError, setTeamNameError] = useState(false);
   const [teamDescError, setTeamDescError] = useState(false);
   const [teamMemberNameError, setTeamMemberNameError] = useState(false);
   const [teamMemberEmailError, setTeamMemberEmailError] = useState(false);
-
   const [courseError, setCourseError] = useState(false);
+  const [selectedSemesterError, setSelectedSemesterError] = useState(false);
 
   const style = useStyles();
 
@@ -78,14 +80,14 @@ function ProposalForm() {
     if(course === ''){
       setCourseError(true)
     }
+    if(selectedSemester === ''){
+      setSelectedSemesterError(true);
+    }
 
     if(teamName && teamDesc && course){
       console.log(teamName, teamDesc, teamMembers, course)
     }
   }
-  useEffect(() => {
-    
-    },[countMember])
 
   const addInputMember = () => {
     let countArr = [...countMember]
@@ -122,10 +124,36 @@ function ProposalForm() {
   }
   
   //just for test
-  useEffect(() =>{
-    console.log(teamMembers)
-  },[teamMembers])
+  // useEffect(() =>{
+  //   console.log(teamMembers)
+  // },[teamMembers])
 
+  // useEffect(()=> {
+  //   let currentYear = new Date().getFullYear();
+  //   let currentMonth = new Date().getMonth();
+  //   if(currentMonth>=8){
+  //     currentMonth = 8
+  //   }else{
+  //     currentMonth = 7;
+  //   }
+    
+  //    while(currentYear >= 2019){
+  //     if(currentMonth>=8){
+  //       setSemesters(...semesters,`${currentYear} - 2` )
+  //       setSemesters(...semesters,`${currentYear} - 2`)
+  //       currentMonth--;
+  //     }else{
+  //        setSemesters(...semesters,`${currentYear} - 1`)
+  //       currentMonth++;
+  //       currentYear--;
+  //     }
+  //    }
+  //   console.log(semesters)
+  // },[])
+
+  useEffect(() => {
+    
+  },[countMember])
 
   useEffect(() => {
     if (selectedImage) {
@@ -185,7 +213,33 @@ function ProposalForm() {
             })}
           </Select>
         </FormControl>
-        
+        <FormControl
+          fullWidth
+          variant='outlined'
+          style={{
+            textAlign: 'left',
+          }}
+          className={style.formElement}
+          error={selectedSemesterError}
+          required
+        >
+          <InputLabel id="year-lable">수강 학기</InputLabel>
+          <Select
+            labelId='year-lable'
+            value={selectedSemester}
+            fullWidth
+            onChange={(e) => {
+              setSelectedSemester(e.target.value)
+              if(e.target.value !== ''){
+                setSelectedSemesterError(false)
+              }
+            }}
+          >
+            {semesters.map((year, index)=> {
+              return <MenuItem key={index} value={year}>{year}</MenuItem>
+            })}
+          </Select>
+        </FormControl>
         <CreateInputMember>
         {countMember.map((item, index)=> {
           return (
@@ -199,7 +253,7 @@ function ProposalForm() {
                   setTeamMemberNameError(false)
                 }
               }}
-              label='Team Member'
+              label='Team Member Name'
               variant='outlined'
               color="primary"
               fullWidth
@@ -215,7 +269,7 @@ function ProposalForm() {
                     setTeamMemberEmailError(false)
                   }
                 }}
-                label='email'
+                label='Email'
                 variant='outlined'
                 color="primary"
                 fullWidth

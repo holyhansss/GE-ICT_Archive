@@ -48,7 +48,7 @@ const Content = styled(Link)`
 `
 const MainImage = styled.img`
     flex: 3;
-    max-height: 300px;
+    height: 200px;
     max-width: 400px;
     object-fit: contain;
 `
