@@ -1,11 +1,15 @@
 import {React, useState, useEffect} from 'react';
-import { Typography, Box, Button, TextField, Select, MenuItem, FormControl, InputLabel, makeStyles } from '@material-ui/core';
-import InputMember from './inputMember';
+import { Typography,Input, Box, Button, TextField, Select, MenuItem, FormControl, InputLabel, makeStyles } from '@material-ui/core';
+import { Firestore } from 'firebase/firestore';
 import styled from 'styled-components';
 
 const useStyles = makeStyles({
   formElement: {
     margin: '10px 0px 10px 0px'
+  },
+  teamMember: {
+      margin: '10px 5px 10px 0px',
+      width: '45%',
   },
 });
 
@@ -30,8 +34,16 @@ function ProposalForm() {
   const courseList=['제기개', '캡스톤 GE', '캡스톤 ICT'];
 
   const [teamName, setTeamName] = useState('');
-  const [teamMember, setTeamMember] = useState('');
+  const [teamMembers, setTeamMembers] = useState([
+    {
+      id: 0,
+      name: "",
+      email: "",
+    },
+  ]);
+
   const [countMember, setCountMember] = useState([0]);
+
   const [teamDesc, setTeamDesc] = useState('');
   const [course, setCourse] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
@@ -39,10 +51,14 @@ function ProposalForm() {
 
   const [teamNameError, setTeamNameError] = useState(false);
   const [teamDescError, setTeamDescError] = useState(false);
-  const [teamMemberError, setTeamMemberError] = useState(false);
+  const [teamMemberNameError, setTeamMemberNameError] = useState(false);
+  const [teamMemberEmailError, setTeamMemberEmailError] = useState(false);
+
   const [courseError, setCourseError] = useState(false);
 
   const style = useStyles();
+
+
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -53,15 +69,18 @@ function ProposalForm() {
     if(teamDesc === '') {
       setTeamDescError(true)
     }
-    if(teamMember === '') {
-      setTeamMemberError(true)
+    if(teamMembers[0].name === '') {
+      setTeamMemberNameError(true)
+    }
+    if(teamMembers[0].email === ''){
+      setTeamMemberEmailError(true)
     }
     if(course === ''){
       setCourseError(true)
     }
 
-    if(teamName && teamDesc && teamMember && course){
-      console.log(teamName, teamDesc, teamMember, course)
+    if(teamName && teamDesc && course){
+      console.log(teamName, teamDesc, teamMembers, course)
     }
   }
   useEffect(() => {
@@ -71,10 +90,42 @@ function ProposalForm() {
   const addInputMember = () => {
     let countArr = [...countMember]
     let counter = countArr.slice(-1)[0]
+  
     counter += 1
     countArr.push(counter)
     setCountMember(countArr)
+    addTeamMembersArray()
   }
+
+  const addTeamMembersArray = () => {
+    const newMember = {
+      id: teamMembers.length,
+      name: '',
+      email: '',
+    }
+    setTeamMembers(teamMembers.concat( newMember))
+  }
+  
+  const handleMemberNameChange = (targetId, _name) => {
+    setTeamMembers(
+      teamMembers.map((member) =>
+        member.id === targetId ? { ...member, name: _name } : member
+      )
+    )
+  }
+  const handleMemberEmailChange = (targetId, _email) => {
+    setTeamMembers(
+      teamMembers.map((member) =>
+        member.id === targetId ? { ...member, email: _email } : member
+      )
+    )
+  }
+  
+  //just for test
+  useEffect(() =>{
+    console.log(teamMembers)
+  },[teamMembers])
+
 
   useEffect(() => {
     if (selectedImage) {
@@ -119,7 +170,6 @@ function ProposalForm() {
         >
           <InputLabel id="course-lable">Course</InputLabel>
           <Select
-          
             labelId='course-lable'
             value={course}
             fullWidth
@@ -129,7 +179,6 @@ function ProposalForm() {
                 setCourseError(false)
               }
             }}
-            
           >
             {courseList.map((course, index)=> {
               return <MenuItem key={index} value={course}>{course}</MenuItem>
@@ -138,7 +187,48 @@ function ProposalForm() {
         </FormControl>
         
         <CreateInputMember>
-            <InputMember countMember={countMember}></InputMember>
+        {countMember.map((item, index)=> {
+          return (
+            <div key={item}>
+            <TextField
+              key={`member ${index}`}
+              name="name"
+              onChange={(e) => {
+                handleMemberNameChange(index, e.target.value)
+                if(e.target.value !== ''){
+                  setTeamMemberNameError(false)
+                }
+              }}
+              label='Team Member'
+              variant='outlined'
+              color="primary"
+              fullWidth
+              required
+              error={teamMemberNameError}
+              className={style.teamMember}
+            />
+            <TextField
+                key={index}
+                onChange={(e) => {
+                  handleMemberEmailChange(index, e.target.value)
+                  if(e.target.value !== ''){
+                    setTeamMemberEmailError(false)
+                  }
+                }}
+                label='email'
+                variant='outlined'
+                color="primary"
+                fullWidth
+                required
+               error={teamMemberEmailError}
+              className={style.teamMember}
+            />
+            </div>
+
+          );
+        })}
+
+
             <Button variant="outlined" onClick={() => {
                 addInputMember()
             }
@@ -151,7 +241,7 @@ function ProposalForm() {
               setTeamDescError(false)
             }
           }}
-          label='Team Description'
+          label='Project Description'
           variant='outlined'
           color='primary'
           required
@@ -181,6 +271,20 @@ function ProposalForm() {
             </Box>
           )}
         </>
+        <br></br>
+        <Typography>최종 보고서</Typography>
+        <Button
+          variant="contained"
+          component="label"
+          >
+          <Input
+            type="file"
+            hidden
+          />
+        </Button>
+
+        <br></br>
+
         <Button
           type='submit'
           variant='contained'

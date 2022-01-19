@@ -22,10 +22,6 @@ const useStyles = makeStyles({
         textAlign: 'center',
         wordWrap: "break-word"
     },
-    
-    // card:nth-children(1): {
-        
-    // },
     team_name: {
         margin: '0px',
     }

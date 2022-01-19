@@ -4,7 +4,7 @@ import styled from 'styled-components';
  
 const useStyles = makeStyles({
     margin: {
-      margin: '10px 0px 10px 0px',
+      margin: '10px 5px 10px 0px',
       width: '45%',
     },
 });
