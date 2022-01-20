@@ -23,7 +23,7 @@ const Content = styled.div`
 `
 const MainImage = styled.img`
   flex: 3;
-  max-height: 500px;
+  max-height: 400px;
   max-width: 100%;
   object-fit: contain;
 `
@@ -63,11 +63,10 @@ const DetailPage = () => {
         <ContentWrapper>
           <Content>
             <MainImage src={contentInfo.image_url}/>
-            <TeamName>{contentInfo.team_name}</TeamName>
-            <SchoolOf>{contentInfo.school_of}</SchoolOf>
+            <TeamName>{contentInfo.teamName}</TeamName>
+            <SchoolOf>{contentInfo.semester}</SchoolOf>
             <TeamMembers>{contentInfo.team_member}</TeamMembers>
-            <Professor>{contentInfo.professor} 교수님</Professor>
-            <TeamDesc>Abstract : <br/><br/>{contentInfo.team_desc}</TeamDesc>
+            <TeamDesc>Abstract : <br/><br/>{contentInfo.project_description}</TeamDesc>
           </Content>
         </ContentWrapper>
         
