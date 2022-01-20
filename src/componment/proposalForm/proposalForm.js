@@ -238,14 +238,6 @@ function ProposalForm() {
       )
     )
   }
-  
-  // just for test
-  // useEffect(() =>{
-  //   console.log(teamMembers)
-  // },[teamMembers])
-  // useEffect(()=> {
-  //   console.log(selectedFiles);
-  // },[selectedFiles])
 
   useEffect(() => {
     
@@ -253,7 +245,6 @@ function ProposalForm() {
 
   useEffect(() => {
     if (selectedImage) {
-      //console.log(selectedImage)
       setImageUrl(URL.createObjectURL(selectedImage));
     }
   }, [selectedImage]);

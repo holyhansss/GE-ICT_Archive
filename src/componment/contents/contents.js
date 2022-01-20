@@ -15,9 +15,6 @@ const useStyles = makeStyles({
             margin: '100px 0px 0px 0px',
         },
     },
-    // link: {
-    //     wordWrap: "break-word"
-    // },
     team_name: {
         color: 'black',
         margin: '0px',
@@ -50,17 +47,16 @@ const TeamDesc = styled.div`
 
 `
 const Contents = ({ year }) => {
+    const db = getFirestore();
 
     const style = useStyles();
-
+    const course = "제품 기획 및 개발"
     const [content, setContent] = useState([]);
-
     useEffect(() => {
         const FetchContents = async () => {
-            const db = getFirestore();
-            const data = await getDocs(collection(db, "제품 기획 및 개발"));
-        
-            setContent(data.docs.map((doc) => ({...doc.data(), id: doc.id})));            
+            const data = await getDocs(collection(db, course));
+            setContent(data.docs.map((doc) => ({...doc.data(), id: doc.id})));        
+                
         };
         FetchContents();
     },[])
@@ -72,7 +68,9 @@ const Contents = ({ year }) => {
             to={`/detailpages/${index}`}
             state={{
                 id: index,
+                course: course,
                 contentInfo: doc,
+
             }}
             className={style.link}
             style={{ textDecoration: 'none' }}
