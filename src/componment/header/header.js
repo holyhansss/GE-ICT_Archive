@@ -92,7 +92,7 @@ const Header = () => {
     }
     const handleLogoutClick = async () => {
         await signOut(auth)
-        setUser(auth.currentUser)
+        setUser(null)
     }
 
     return (

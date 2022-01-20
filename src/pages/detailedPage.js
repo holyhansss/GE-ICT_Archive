@@ -17,7 +17,6 @@ const ContentWrapper = styled.div`
 const Content = styled.div`
   display: flex;
   flex-direction: column;
-  // background-color: orange;
   width: 60%;
   color: black;
   margin-top: 100px;
@@ -92,11 +91,11 @@ const DetailPage = () => {
                 members == null 
                 ? <div></div>
                 : members.map((member, index) => 
-                    <TeamMemberInfo key={index} >{member.name} / {member.email}</TeamMemberInfo>
+                    <TeamMemberInfo key={index} >{member.name} / {member.email} / {member.classOf} / {member.major}</TeamMemberInfo>
                 )
               }
             </TeamMembers>
-            <TeamDesc>Abstract : <br/><br/>{contentInfo.project_description}</TeamDesc>
+            <TeamDesc>Abstract : {contentInfo.project_description}</TeamDesc>
           </Content>
         </ContentWrapper>
         

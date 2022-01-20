@@ -9,9 +9,13 @@ const useStyles = makeStyles({
   formElement: {
     margin: '10px 0px 10px 0px'
   },
+  teamMemberEmail: {
+    margin: '10px 5px 10px 0px',
+    width: "30%"
+  },
   teamMember: {
-      margin: '10px 5px 10px 0px',
-      width: '45%',
+    margin: '10px 5px 10px 0px',
+    width: "22%"
   },
   filesTypography: {
     margin: '0px 30px 0px 0px'
@@ -52,8 +56,10 @@ function ProposalForm() {
   const [teamMembers, setTeamMembers] = useState([
     {
       id: 0,
-      name: "",
-      email: "",
+      name: '',
+      email: '',
+      classOf: '',
+      major: '',
     },
   ]);
 
@@ -70,18 +76,18 @@ function ProposalForm() {
   const [selectedFiles, setSelectedFiles] = useState([
     {
       id: 0,
-      fileName: "최종보고서",
-      file: "",
+      fileName: '최종보고서',
+      file: '',
     },
     {
       id: 1,
-      fileName: "기말발표",
-      file: "",
+      fileName: '기말발표',
+      file: '',
     },
     {
       id: 2,
-      fileName: "MVP",
-      file: "",
+      fileName: 'MVP',
+      file: '',
     }
 
   ]);
@@ -90,6 +96,9 @@ function ProposalForm() {
   const [teamDescError, setTeamDescError] = useState(false);
   const [teamMemberNameError, setTeamMemberNameError] = useState(false);
   const [teamMemberEmailError, setTeamMemberEmailError] = useState(false);
+  const [teamMemberClassOfError, setTeamMemberClassOfError] = useState(false);
+  const [teamMemberMajorError, setTeamMemberMajorError] = useState(false);
+
   const [courseError, setCourseError] = useState(false);
   const [selectedSemesterError, setSelectedSemesterError] = useState(false);
 
@@ -110,11 +119,17 @@ function ProposalForm() {
     if(teamMembers[0].email === ''){
       setTeamMemberEmailError(true)
     }
+    if(teamMembers[0].classOf === ''){
+      setTeamMemberClassOfError(true)
+    }
+    if(teamMembers[0].major === ''){
+      setTeamMemberMajorError(true)
+    }
     if(course === ''){
       setCourseError(true)
     }
     if(selectedSemester === ''){
-      setSelectedSemesterError(true);
+      setSelectedSemesterError(true)
     }
     
     if(teamName && teamDesc && course && selectedSemester && teamMembers && selectedImage){
@@ -152,17 +167,19 @@ function ProposalForm() {
         image_url: imageURL,
       })
       // member 저장
-      const memberCollectionRef = collection(docRef, "members")
+      const memberCollectionRef = collection(docRef, 'members')
       teamMembers.map((memberInfo, index)=> {
         if(memberInfo.name !== '' && memberInfo.email !== ''){
           addDoc(memberCollectionRef, {
             name: memberInfo.name,
             email: memberInfo.email,
+            classOf: memberInfo.classOf,
+            major: memberInfo.major,
           })
         }
       })
       //FILES URL 링크들 저장
-      const fileCollectionRef = collection(docRef, "fileURLs")
+      const fileCollectionRef = collection(docRef, 'fileURLs')
       fileURLssss.map((fileURL, index) => {
         console.log(fileURL.name)
         console.log(fileURL.URL)
@@ -193,6 +210,8 @@ function ProposalForm() {
       id: teamMembers.length,
       name: '',
       email: '',
+      classOf: '',
+      major: '',
     }
     setTeamMembers(teamMembers.concat(newMember))
   }
@@ -229,7 +248,23 @@ function ProposalForm() {
       )
     )
   }
-  
+  const handleMemberClassOfChange = (targetId, _classOf) => {
+    setTeamMembers(
+      teamMembers.map((member) =>
+        member.id === targetId ? { ...member, classOf: _classOf } : member
+      )
+    )
+  }
+  const handleMemberMajorChange = (targetId, _major) => {
+    setTeamMembers(
+      teamMembers.map((member) =>
+        member.id === targetId ? { ...member, major: _major } : member
+      )
+    )
+  }
+
+
+
   const handleFileChange = (targetId, _file) => {
     console.log(targetId)
     setSelectedFiles(
@@ -266,7 +301,7 @@ function ProposalForm() {
           }}
           label='Team Name'
           variant='outlined'
-          color="primary"
+          color='primary'
           fullWidth
           required
           error={teamNameError}
@@ -283,7 +318,7 @@ function ProposalForm() {
           error={courseError}
           required
         >
-          <InputLabel id="course-lable">Course</InputLabel>
+          <InputLabel id='course-lable'>Course</InputLabel>
           <Select
             labelId='course-lable'
             value={course}
@@ -310,7 +345,7 @@ function ProposalForm() {
           error={selectedSemesterError}
           required
         >
-          <InputLabel id="year-lable">수강 학기</InputLabel>
+          <InputLabel id='year-lable'>수강 학기</InputLabel>
           <Select
             labelId='year-lable'
             value={selectedSemester}
@@ -332,17 +367,17 @@ function ProposalForm() {
           return (
             <div key={item}>
             <TextField
-              key={`member ${index}`}
-              name="name"
+              key={index}
+              name='name'
               onChange={(e) => {
                 handleMemberNameChange(index, e.target.value)
                 if(e.target.value !== ''){
                   setTeamMemberNameError(false)
                 }
               }}
-              label='Team Member Name'
+              label='Name'
               variant='outlined'
-              color="primary"
+              color='primary'
               fullWidth
               required
               error={teamMemberNameError}
@@ -358,10 +393,42 @@ function ProposalForm() {
                 }}
                 label='Email'
                 variant='outlined'
-                color="primary"
+                color='primary'
                 fullWidth
                 required
                error={teamMemberEmailError}
+              className={style.teamMemberEmail}
+            />
+            <TextField
+                key={index}
+                onChange={(e) => {
+                  handleMemberClassOfChange(index, e.target.value)
+                  if(e.target.value !== ''){
+                    setTeamMemberClassOfError(false)
+                  }
+                }}
+                label='학번 ex) 19, 20'
+                variant='outlined'
+                color='primary'
+                fullWidth
+                required
+               error={teamMemberClassOfError}
+              className={style.teamMember}
+            />
+            <TextField
+                key={index}
+                onChange={(e) => {
+                  handleMemberMajorChange(index, e.target.value)
+                  if(e.target.value !== ''){
+                    setTeamMemberMajorError(false)
+                  }
+                }}
+                label='전공 ex. GE/전산'
+                variant='outlined'
+                color='primary'
+                fullWidth
+                required
+               error={teamMemberMajorError}
               className={style.teamMember}
             />
             </div>
@@ -370,13 +437,13 @@ function ProposalForm() {
         })}
 
 
-        <Button variant="outlined" onClick={() => {
+        <Button variant='outlined' onClick={() => {
             addInputMember()
           }
         }>
           +
         </Button>
-        <Button variant="outlined" onClick={() => {
+        <Button variant='outlined' onClick={() => {
             subInputMember()
           }
         }>
@@ -402,21 +469,21 @@ function ProposalForm() {
         />
         <>
           <input
-            accept="image/*"
-            type="file"
-            id="select-image"
+            accept='image/*'
+            type='file'
+            id='select-image'
             style={{ display: 'none' }}
             onChange={e => setSelectedImage(e.target.files[0])}
           />
-          <label htmlFor="select-image">
-            <Button variant="contained" color="primary" component="span">
+          <label htmlFor='select-image'>
+            <Button variant='contained' color='primary' component='span'>
               Upload Image
             </Button>
           </label>
           {imageUrl && selectedImage && (
-            <Box mt={2} textAlign="center">
+            <Box mt={2} textAlign='center'>
               <div>Image Preview:</div>
-              <img src={imageUrl} alt={selectedImage.name} height="300px" />
+              <img src={imageUrl} alt={selectedImage.name} height='300px' />
             </Box>
           )}
         </>
@@ -431,11 +498,11 @@ function ProposalForm() {
                 <Typography className={style.filesTypography}>{report}</Typography>
               </Box>
               <Button 
-                variant="contained"
-                component="label"
+                variant='contained'
+                component='label'
                 >
                 <Input
-                  type="file"
+                  type='file'
                   hidden
                   onChange={(e)=> {
                     handleFileChange(index, e.target.files[0])
