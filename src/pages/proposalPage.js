@@ -7,9 +7,9 @@ import ProposalForm from '../componment/proposalForm/proposalForm.js';
 function ProposalPage() {
   return (
     <div>
-      <Header></Header>
-      <ProposalForm></ProposalForm>
-      <Footer></Footer>
+      <Header/>
+      <ProposalForm/>
+      <Footer/>
     </div>
   );
 }
