@@ -8,20 +8,19 @@ import { Link } from "react-router-dom";
 import { Card, CardHeader, CardContent, CardActions, makeStyles} from "@material-ui/core";
 
 const useStyles = makeStyles({
-    link: {
+    card: {
         margin: '10px 0px 10px 0px',
         width: '30%',
-        
+        textAlign: 'center',
+  
         maxHeight: '30%',
-        backgroundColor: 'orange',
         "&:nth-child(1), &:nth-child(2), &:nth-child(3)": {
-            margin: '70px 0px 0px 0px',
+            margin: '100px 0px 0px 0px',
         },
     },
-    card: {
-        textAlign: 'center',
-        wordWrap: "break-word"
-    },
+    // link: {
+    //     wordWrap: "break-word"
+    // },
     team_name: {
         margin: '0px',
     }
@@ -48,8 +47,8 @@ const Content = styled(Link)`
 `
 const MainImage = styled.img`
     flex: 3;
-    height: 200px;
-    max-width: 400px;
+    max-height: 200px;
+    width: 100%;
     object-fit: contain;
 `
 const TeamName = styled.div`
@@ -85,7 +84,9 @@ const Contents = ({ year }) => {
     },[])
     
     const list = content.map((doc, index) => (
-        <Link key={index}
+        
+            <Card key={index} className={style.card} >
+                <Link key={index}
         to={`/detailpages/${index}`}
         state={{
             id: index,
@@ -94,7 +95,6 @@ const Contents = ({ year }) => {
         className={style.link}
         style={{ textDecoration: 'none' }}
         >
-            <Card key={index} className={style.card} >
                 <CardContent>
                     <MainImage src={doc.image_url}></MainImage>
                 </CardContent>
@@ -102,9 +102,8 @@ const Contents = ({ year }) => {
                 {/* <CardContent>
                     <TeamDesc>{doc.team_desc}</TeamDesc>
                 </CardContent> */}
-                
-            </Card>
         </Link>
+            </Card>
     ));
     
     return (
