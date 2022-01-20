@@ -93,8 +93,11 @@ const Header = () => {
     const handleLogoutClick = async () => {
         await signOut(auth)
         setUser(null)
+        window.location.reload();
     }
-
+    const proposal = () => {
+        
+    }
     return (
       <Positioner>
           <WhiteBackground>

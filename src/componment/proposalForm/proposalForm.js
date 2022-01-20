@@ -367,7 +367,7 @@ function ProposalForm() {
           return (
             <div key={item}>
             <TextField
-              key={index}
+              key={"name" + index}
               name='name'
               onChange={(e) => {
                 handleMemberNameChange(index, e.target.value)
@@ -384,7 +384,7 @@ function ProposalForm() {
               className={style.teamMember}
             />
             <TextField
-                key={index}
+                key={"email" + index}
                 onChange={(e) => {
                   handleMemberEmailChange(index, e.target.value)
                   if(e.target.value !== ''){
@@ -400,7 +400,7 @@ function ProposalForm() {
               className={style.teamMemberEmail}
             />
             <TextField
-                key={index}
+                key={"classOF" + index}
                 onChange={(e) => {
                   handleMemberClassOfChange(index, e.target.value)
                   if(e.target.value !== ''){
@@ -416,14 +416,14 @@ function ProposalForm() {
               className={style.teamMember}
             />
             <TextField
-                key={index}
+                key={"major" + index}
                 onChange={(e) => {
                   handleMemberMajorChange(index, e.target.value)
                   if(e.target.value !== ''){
                     setTeamMemberMajorError(false)
                   }
                 }}
-                label='전공 ex. GE/전산'
+                label='전공 ex. GE 전산'
                 variant='outlined'
                 color='primary'
                 fullWidth

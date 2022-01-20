@@ -91,7 +91,7 @@ const DetailPage = () => {
                 members == null 
                 ? <div></div>
                 : members.map((member, index) => 
-                    <TeamMemberInfo key={index} >{member.name} / {member.email} / {member.classOf} / {member.major}</TeamMemberInfo>
+                    <TeamMemberInfo key={index} >{member.name} / {member.email} / {member.classOf}학번 / {member.major}</TeamMemberInfo>
                 )
               }
             </TeamMembers>
