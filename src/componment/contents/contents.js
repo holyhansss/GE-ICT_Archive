@@ -4,6 +4,7 @@ import { firebase } from "../../firebase";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { Link } from "react-router-dom";
 import { Card, CardHeader, CardContent, CardActions, makeStyles} from "@material-ui/core";
+import oc from 'open-color';
 
 const useStyles = makeStyles({
     card: {
@@ -34,6 +35,17 @@ const MainImage = styled.img`
     width: 100%;
     object-fit: contain;
 `
+const Tags = styled.div`
+    display: inline-block;
+    color: black;
+    background-color: ${oc.gray[3]};
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: bold;
+    margin: 0px 2.5px 0px 2.5px;
+    padding: 2px 5px 2px 5px;
+
+`
 const TeamDesc = styled.div`
     flex:2;
     display: block;
@@ -47,8 +59,9 @@ const TeamDesc = styled.div`
 
 `
 const Contents = ({ year }) => {
+    
     const db = getFirestore();
-
+    const [loading, setLoading] = useState(true);
     const style = useStyles();
     const course = "제품 기획 및 개발"
     const [content, setContent] = useState([]);
@@ -56,13 +69,14 @@ const Contents = ({ year }) => {
         const FetchContents = async () => {
             const data = await getDocs(collection(db, course));
             setContent(data.docs.map((doc) => ({...doc.data(), id: doc.id})));        
-                
+             
         };
         FetchContents();
+        setLoading(false)
     },[])
     
     const list = content.map((doc, index) => (
-        
+        loading == false ?
         <Card key={index} className={style.card} >
             <Link key={index}
             to={`/detailpages/${index}`}
@@ -80,10 +94,17 @@ const Contents = ({ year }) => {
                 </CardContent>
                 <CardHeader title={doc.teamName} className={style.team_name}></CardHeader>
                 <CardContent>
-                    <TeamDesc>{doc.project_description}</TeamDesc>
+                    {
+                    doc.hashTag != undefined ?
+                    doc.hashTag.map((tag)=> 
+                    <Tags>{tag}</Tags>
+                    )
+                    : <div></div>
+                    }       
                 </CardContent>
             </Link>
         </Card>
+        : <Card key={index}></Card>
     ));
     
     return (

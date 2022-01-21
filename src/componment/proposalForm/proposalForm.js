@@ -3,6 +3,8 @@ import { Typography,Input, Box, Button, TextField, Select, MenuItem, FormControl
 import { Firestore, snapshotEqual } from 'firebase/firestore';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
+import ReactTagInput from "@pathofdev/react-tag-input";
+import "@pathofdev/react-tag-input/build/index.css";
 import styled from 'styled-components';
 
 const useStyles = makeStyles({
@@ -19,6 +21,12 @@ const useStyles = makeStyles({
   },
   filesTypography: {
     margin: '0px 30px 0px 0px'
+  },
+  inputImageButton: {
+    margin: '20px 0px 0px 0px' 
+  },
+  memberPlueMinus: {
+    margin: '0px 2px 2px 2px' 
   }
 });
 
@@ -70,6 +78,7 @@ function ProposalForm() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
   const [selectedSemester, setSelectedSemester] = useState('');
+  const [tags, setTags] = useState(["example tag"])
   const [fileURLs, setFileURLs] = useState([
     {}
   ]);
@@ -137,10 +146,12 @@ function ProposalForm() {
       const db = getFirestore();
       const storage = getStorage();
       const fileURLssss = [];
-      const now = Date().now;
+      const date = new Date()
+      const currentTime = date.getFullYear() + '' + (date.getMonth()+1) + '' +date.getDate() + '' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+      console.log(currentTime);
 
       // upload main image
-      let imageStorageRef = ref(storage, `images/${selectedImage.name}`)
+      let imageStorageRef = ref(storage, `images/${selectedImage.name}${currentTime}`)
       await uploadBytes(imageStorageRef, selectedImage)
       const imageURL = await getDownloadURL(imageStorageRef)
       //upload files
@@ -148,7 +159,7 @@ function ProposalForm() {
         if(selectedFiles[i].file !== ''){
           let filename = selectedFiles[i].fileName;
           console.log(selectedFiles[i].fileName)
-          let storageRef = ref(storage, `${selectedFiles[i].fileName}${now}`);
+          let storageRef = ref(storage, `${selectedFiles[i].fileName}${currentTime}`);
           await uploadBytes(storageRef, selectedFiles[i].file)
           let URL = await getDownloadURL(storageRef)
           let newFile = {
@@ -165,6 +176,7 @@ function ProposalForm() {
         project_description: teamDesc,
         semester: selectedSemester,
         image_url: imageURL,
+        hashTag: tags,
       })
       // member 저장
       const memberCollectionRef = collection(docRef, 'members')
@@ -206,6 +218,7 @@ function ProposalForm() {
   }
   
   const addTeamMembersArray = () => {
+
     const newMember = {
       id: teamMembers.length,
       name: '',
@@ -273,6 +286,10 @@ function ProposalForm() {
       )
     )
   }
+  // useEffect(() => {
+  //   if(course !== '')
+  //   setTags(course)
+  // },[course])
 
   useEffect(() => {
     
@@ -437,18 +454,27 @@ function ProposalForm() {
         })}
 
 
-        <Button variant='outlined' onClick={() => {
-            addInputMember()
+        <Button 
+          variant='outlined' 
+          onClick={() => {
+              addInputMember()
+            }
           }
-        }>
+          className={style.memberPlueMinus}
+        >
           +
         </Button>
-        <Button variant='outlined' onClick={() => {
-            subInputMember()
+        <Button 
+          variant='outlined' 
+          onClick={() => {
+              subInputMember()
+            }
           }
-        }>
+        className={style.memberPlueMinus}
+        >
           -
         </Button>
+
         </CreateInputMember>
         <TextField
           onChange={(e) => {
@@ -467,6 +493,13 @@ function ProposalForm() {
           className={style.formElement}
 
         />
+        <ReactTagInput 
+          tags={tags}
+          maxTags={10}
+          removeOnBackspace={true}
+          placeholder="HashTag: 단어 치구 Enter!"
+          onChange={(newTags) => setTags(newTags)}
+        />
         <>
           <input
             accept='image/*'
@@ -476,7 +509,12 @@ function ProposalForm() {
             onChange={e => setSelectedImage(e.target.files[0])}
           />
           <label htmlFor='select-image'>
-            <Button variant='contained' color='primary' component='span'>
+            <Button 
+              variant='contained' 
+              color='primary' 
+              component='span'
+              className={style.inputImageButton}
+            >
               Upload Image
             </Button>
           </label>
@@ -514,7 +552,7 @@ function ProposalForm() {
         })}
        
         <br></br>
-
+        
         <Button
           type='submit'
           variant='contained'
