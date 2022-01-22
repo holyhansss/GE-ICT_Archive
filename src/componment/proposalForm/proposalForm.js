@@ -21,6 +21,10 @@ const useStyles = makeStyles({
     margin: '10px 5px 10px 0px',
     width: "22%"
   },
+  linkURL: {
+    margin: '10px 5px 10px 0px',
+    width: "70%"
+  },
   filesTypography: {
     margin: '0px 30px 0px 0px'
   },
@@ -62,6 +66,9 @@ function ProposalForm() {
 
 
   const [teamName, setTeamName] = useState('');
+  const [countMember, setCountMember] = useState([0]);
+  const [countLinks, setCountLinks] = useState([0]);
+
   const [teamMembers, setTeamMembers] = useState([
     {
       id: 0,
@@ -71,8 +78,13 @@ function ProposalForm() {
       major: '',
     },
   ]);
-
-  const [countMember, setCountMember] = useState([0]);
+  const [links, setLinks] = useState([
+    {
+      id: 0,
+      name: '',
+      link: '',
+    },
+  ]);
 
   const [teamDesc, setTeamDesc] = useState('');
   const [course, setCourse] = useState('');
@@ -84,21 +96,21 @@ function ProposalForm() {
     {}
   ]);
   const [selectedFiles, setSelectedFiles] = useState([
-    {
-      id: 0,
-      fileName: '최종보고서',
-      file: '',
-    },
-    {
-      id: 1,
-      fileName: '기말발표',
-      file: '',
-    },
-    {
-      id: 2,
-      fileName: 'MVP',
-      file: '',
-    }
+    // {
+    //   id: 0,
+    //   fileName: '최종보고서',
+    //   file: '',
+    // },
+    // {
+    //   id: 1,
+    //   fileName: '기말발표',
+    //   file: '',
+    // },
+    // {
+    //   id: 2,
+    //   fileName: 'MVP',
+    //   file: '',
+    // }
 
   ]);
 
@@ -213,9 +225,9 @@ function ProposalForm() {
     setCountMember(countArr)
     addTeamMembersArray()
   }
+
   
   const addTeamMembersArray = () => {
-
     const newMember = {
       id: teamMembers.length,
       name: '',
@@ -224,6 +236,26 @@ function ProposalForm() {
       major: '',
     }
     setTeamMembers(teamMembers.concat(newMember))
+  }
+  
+  const addInputLinks = () => {
+    let countArr = [...countLinks]
+    let counter = countArr.slice(-1)[0]
+  
+    counter += 1
+    countArr.push(counter)
+    setCountLinks(countArr)
+    addLinksArray()
+  }
+
+  const addLinksArray = () => {
+    const newLink = {
+      id: links.length,
+      name: '',
+      link: '',
+    }
+    setLinks(links.concat(newLink))
+    console.log(links)
   }
 
   const subInputMember = () => {
@@ -235,14 +267,29 @@ function ProposalForm() {
       setCountMember(countArr)
       subTeamMembersArray() 
     }
-
-    
   }
   const subTeamMembersArray = () => {
     let teamMemberArr = [...teamMembers]
     teamMemberArr.pop()
     setTeamMembers(teamMemberArr)
   }
+
+  const subInputLinks = () => {
+    let countArr = [...countLinks]
+    countArr.pop()
+    if(links.length <= 1){
+
+    }else {
+      setCountLinks(countArr)
+      subLinksArray() 
+    }
+  }
+  const subLinksArray = () => {
+    let linksArr = [...links]
+    linksArr.pop()
+    setLinks(linksArr)
+  }
+
 
   const handleMemberNameChange = (targetId, _name) => {
     setTeamMembers(
@@ -272,6 +319,20 @@ function ProposalForm() {
       )
     )
   }
+  const handleLinkNameChange = (targetId, _linkName) => {
+    setLinks(
+      links.map((link) =>
+        link.id === targetId ? { ...link, name: _linkName } : link
+      )
+    )
+  }
+  const handleLinkURLChange = (targetId, _URL) => {
+    setLinks(
+      links.map((link) =>
+        link.id === targetId ? { ...link, URL: _URL } : link
+      )
+    )
+  }
 
 
 
@@ -295,8 +356,8 @@ function ProposalForm() {
   },[])
 
   useEffect(() => {
-    
-  },[countMember])
+    console.log(links)
+  },[countMember,countLinks])
 
   useEffect(() => {
     if (selectedImage) {
@@ -477,8 +538,8 @@ function ProposalForm() {
         >
           -
         </Button>
-
         </CreateInputMember>
+
         <TextField
           onChange={(e) => {
             setTeamDesc(e.target.value)
@@ -503,6 +564,72 @@ function ProposalForm() {
           placeholder="HashTag: 단어 치구 Enter!"
           onChange={(newTags) => setTags(newTags)}
         />
+        <CreateInputMember>
+          {countLinks.map((item, index)=> {
+            return (
+              <div key={item}>
+              <TextField
+                key={"LinkName" + index}
+                name='Link Name'
+                onChange={(e) => {
+                  handleLinkNameChange(index, e.target.value)
+                  // if(e.target.value !== ''){
+                  //   setTeamMemberNameError(false)
+                  // }
+                }}
+                label='LINK NAME'
+                variant='outlined'
+                color='primary'
+                fullWidth
+                required
+                //error={teamMemberNameError}
+                className={style.teamMember}
+              />
+              <TextField
+                  key={"LinkURL" + index}
+                  onChange={(e) => {
+                    handleLinkURLChange(index, e.target.value)
+                    // if(e.target.value !== ''){
+                    //   setTeamMemberEmailError(false)
+                    // }
+                  }}
+                  label='Link URL'
+                  variant='outlined'
+                  color='primary'
+                  fullWidth
+                  required
+                // error={teamMemberEmailError}
+                  className={style.linkURL}
+              />
+              </div>
+
+            );
+          })}
+
+
+          <Button 
+            variant='outlined' 
+            onClick={() => {
+                addInputLinks()
+              }
+            }
+            className={style.memberPlueMinus}
+          >
+            +
+          </Button>
+          <Button 
+            variant='outlined' 
+            onClick={() => {
+                subInputLinks()
+              }
+            }
+          className={style.memberPlueMinus}
+          >
+            -
+          </Button>
+        </CreateInputMember>
+
+
         <>
           <input
             accept='image/*'

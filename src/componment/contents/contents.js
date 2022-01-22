@@ -1,10 +1,12 @@
 import  { React, useState, useEffect, Children } from 'react';
 import styled from 'styled-components';
 import { firebase } from "../../firebase";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { getFirestore, collection, getDocs, where } from "firebase/firestore";
 import { Link } from "react-router-dom";
-import { Card, CardHeader, CardContent, CardActions, makeStyles} from "@material-ui/core";
+import { Card, CardHeader, CardContent, CardActions, makeStyles, Select, MenuItem ,Button} from "@material-ui/core";
+import {  } from '@material-ui/core/IconButton';
 import oc from 'open-color';
+import { ICT_COURSES, SEMESTERS } from '../../commons/constants';
 
 const useStyles = makeStyles({
     card: {
@@ -12,13 +14,25 @@ const useStyles = makeStyles({
         width: '30%',
         textAlign: 'center',
         maxHeight: '30%',
-        "&:nth-child(1), &:nth-child(2), &:nth-child(3)": {
-            margin: '100px 0px 0px 0px',
-        },
+        // "&:nth-child(1), &:nth-child(2), &:nth-child(3)": {
+        //     margin: '10px 0px 10px 0px',
+        // },
     },
     team_name: {
         color: 'black',
         margin: '0px',
+    },
+    select: {
+        margin: '100px 0px 0px 0px',
+    },
+    select_course: {
+        width: '13%',
+    },
+    select_semester: {
+        width: '10%',
+    },
+    select_button: {
+        margin: '0px 25px 0px 20px',
     }
 });
 
@@ -28,7 +42,13 @@ const Positioner = styled.div`
     flex-wrap: wrap;
     width: 100%;
 `;
-
+const SelectWrapper = styled.div`
+    display: flex;
+    text-align: right;
+    align-items: center;
+    justify-content: right;
+  
+`
 const MainImage = styled.img`
     flex: 3;
     max-height: 200px;
@@ -59,22 +79,31 @@ const TeamDesc = styled.div`
 
 `
 const Contents = ({ year }) => {
-    
+    const style = useStyles();
+
     const db = getFirestore();
     const [loading, setLoading] = useState(true);
-    const style = useStyles();
-    const course = "제품 기획 및 개발"
+    //const course = "제품 기획 및 개발"
     const [content, setContent] = useState([]);
+    const [years, setYears] = useState(year);
+    const [course, setCourse] = useState('제품 기획 및 개발')
+    const [semester, setSemester] = useState(year);
+
+    const FetchContents = async () => {
+        const data = await getDocs(collection(db, course), where("semester", "==", semester));
+        setContent(data.docs.map((doc) => ({...doc.data(), id: doc.id})));        
+    };
+
     useEffect(() => {
-        const FetchContents = async () => {
-            const data = await getDocs(collection(db, course));
-            setContent(data.docs.map((doc) => ({...doc.data(), id: doc.id})));        
-             
-        };
+        
         FetchContents();
         setLoading(false)
+        console.log('heheh')
     },[])
-    
+
+    useEffect(() => {
+
+    },[content])
     const list = content.map((doc, index) => (
         loading == false ?
         <Card key={index} className={style.card} >
@@ -108,9 +137,49 @@ const Contents = ({ year }) => {
     ));
     
     return (
-        <Positioner>
-            {list}
-        </Positioner>
+        <div>
+            <SelectWrapper className={style.select}>
+                <Select
+                    labelId='course-lable'
+                    value={course}
+                    fullWidth
+                    className={style.select_course}
+                    onChange={(e) => {
+                    setCourse(e.target.value)
+
+                    }}
+                    variant='standard'
+                >
+                    {ICT_COURSES.map((course, index)=> {
+                    return <MenuItem key={index} value={course}>{course}</MenuItem>
+                    })}
+                </Select>
+                <Select
+                    labelId='semester-lable'
+                    value={semester}
+                    fullWidth
+                    className={style.select_semester}
+                    onChange={(e) => {
+                    setSemester(e.target.value)
+                    }}
+                    variant='standard'
+
+                >
+                    {SEMESTERS.map((semester, index)=> {
+                    return <MenuItem key={index} value={semester}>{semester}</MenuItem>
+                    })}
+                </Select>
+                <Button
+                    variant='outlined'
+                    onClick={FetchContents}
+                    className={style.select_button}>
+                    이동
+                </Button>
+            </SelectWrapper>
+            <Positioner>
+                {list}
+            </Positioner>
+        </div>
     );
 }
 
