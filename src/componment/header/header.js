@@ -98,7 +98,7 @@ const Header = () => {
       <Positioner>
           <WhiteBackground>
               <HeaderContents>
-                  <Logo>GE & ICT CAPSTONE</Logo>
+                  <Logo>GE & ICT</Logo>
                   <Link to="/" style={{ textDecoration: 'none' }}>
                     <Slogan>Creation Beyond Technology</Slogan>
                   </Link>
