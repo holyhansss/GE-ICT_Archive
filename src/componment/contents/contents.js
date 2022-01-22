@@ -96,8 +96,8 @@ const Contents = ({ year }) => {
                 <CardContent>
                     {
                     doc.hashTag != undefined ?
-                    doc.hashTag.map((tag)=> 
-                    <Tags>{tag}</Tags>
+                    doc.hashTag.map((tag, index)=> 
+                    <Tags key={index}>{tag}</Tags>
                     )
                     : <div></div>
                     }       

@@ -73,9 +73,7 @@ const LogoutAndProposal = styled.div`
     display:flex;
     flex-direction: row;
     flex: 1;
-
 `
-
 
 const Header = () => {
     const [user, setUser] = useState(null);
@@ -95,9 +93,7 @@ const Header = () => {
         setUser(null)
         window.location.reload();
     }
-    const proposal = () => {
-        
-    }
+    
     return (
       <Positioner>
           <WhiteBackground>
@@ -106,7 +102,7 @@ const Header = () => {
                   <Link to="/" style={{ textDecoration: 'none' }}>
                     <Slogan>Creation Beyond Technology</Slogan>
                   </Link>
-                    {auth.currentUser == null
+                    {auth.currentUser === null
                     ? <LoginButton handleLoginClick={handleLoginClick} />
                     : <LogoutAndProposal>
                         <ProposalCapstone/>

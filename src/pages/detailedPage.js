@@ -3,7 +3,21 @@ import { useParams, useLocation } from "react-router-dom";
 import Header from '../componment/header/header';
 import Footer from '../componment/footer/footer';
 import styled from 'styled-components';
-import { getFirestore, collection, getDocs, doc} from 'firebase/firestore';
+import { getFirestore, collection, getDocs} from 'firebase/firestore';
+import { Button, makeStyles } from '@material-ui/core'
+
+const useStyles = makeStyles({
+  download: {
+    backgroundColor: 'gray',
+    margin: '2.5px 0px 2.5px 0px',
+    width: '35%',
+  },
+  downloadAnchor: {
+    color: 'black',
+    textDecoration: 'none',
+    margin: '0px 0px 0px 10px',
+  }
+});
 
 const ContentWrapper = styled.div`
   display: flex;
@@ -20,6 +34,7 @@ const Content = styled.div`
   width: 60%;
   color: black;
   margin-top: 100px;
+  align-items: center;
 `
 const MainImage = styled.img`
   flex: 3;
@@ -43,38 +58,35 @@ const TeamMemberInfo = styled.div`
 
 `
 
-const TeamDesc = styled.div`
-  margin: 0px 10% 0px 10%;
+const ProjectDesc = styled.div`
+  margin: 0px 10% 50px 10%;
   margin-top: 40px;
   text-align: left;
+  
 `
 
 
 
 const DetailPage = () => {
+  const style = useStyles();
+  
   const db = getFirestore();
   const location = useLocation();
   const { contentInfo, course } = location.state;
   const { id } = useParams();
   const [members, setMembers] = useState(null);
-
-
-  //getMembers(course)
-  //const teamMemberList = contentInfo.team_member.map();
-
-  const getMembers = async (course) => {
+  const [files, setFiles] = useState(null);
   
-    const membersRef = await doc(db, course, "aa", "members");
-    console.log(membersRef)
-  }
   //fetch memebrs, files and links
   useEffect(() => {
     const FetchContents = async () => {
-        const data = await getDocs(collection(db, course, contentInfo.id, "members"));
-        setMembers(data.docs.map((doc) => ({...doc.data(), id: doc.id})));        
-    };
+        const memberData = await getDocs(collection(db, course, contentInfo.id, "members"));
+        setMembers(memberData.docs.map((doc) => ({...doc.data(), id: doc.id})));        
+        const fileData = await getDocs(collection(db, course, contentInfo.id, "fileURLs"));
+        setFiles(fileData.docs.map((doc) => ({...doc.data(), id: doc.id}))); 
+      };
     FetchContents();
-  },[])
+  },[contentInfo])
 
 
   return (
@@ -83,7 +95,9 @@ const DetailPage = () => {
       <Header/>
         <ContentWrapper>
           <Content>
+            
             <MainImage src={contentInfo.image_url}/>
+
             <TeamName>{contentInfo.teamName}</TeamName>
             <SchoolOf>{course} / {contentInfo.semester}</SchoolOf>
             <TeamMembers>
@@ -95,7 +109,17 @@ const DetailPage = () => {
                 )
               }
             </TeamMembers>
-            <TeamDesc>Abstract : {contentInfo.project_description}</TeamDesc>
+            <ProjectDesc>Abstract : {contentInfo.project_description}</ProjectDesc>
+            {
+                files == null 
+                ? <div></div>
+                : files.map((file, index) => 
+                <Button key={index} className={style.download}>
+                  <img src="https://img.icons8.com/material-sharp/18/000000/download--v1.png"/>
+                  <a href={file.URL} target="_blank" className={style.downloadAnchor}>{file.name} Download</a>                
+                </Button>
+                )
+              }
           </Content>
         </ContentWrapper>
         

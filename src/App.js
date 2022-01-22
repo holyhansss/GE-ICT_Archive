@@ -1,12 +1,13 @@
 import { React } from 'react';
-import {BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import MainPage from './pages/mainPage';
 import DetailPage from './pages/detailedPage.js';
-import DetailPages from './pages/detailedPage.js';
 import ProposalPage from './pages/proposalPage.js';
+import { getAuth } from 'firebase/auth';
 
 function App() {
-
+  getAuth().signOut();
+  
   return (
     <BrowserRouter>
       <Routes>

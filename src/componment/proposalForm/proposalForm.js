@@ -7,6 +7,8 @@ import ReactTagInput from "@pathofdev/react-tag-input";
 import "@pathofdev/react-tag-input/build/index.css";
 import styled from 'styled-components';
 
+import { ICT_COURSES, SEMESTERS, COURSE_REPORTS} from '../../commons/constants';
+
 const useStyles = makeStyles({
   formElement: {
     margin: '10px 0px 10px 0px'
@@ -56,9 +58,8 @@ const FilesWrapper = styled.div`
 
 
 function ProposalForm() {
-  const courseList=['제품 기획 및 개발', '캡스톤 GE', '캡스톤 ICT'];
-  const [semesters, setSemesters] = useState(['2022-1','2021-2','2021-1','2020-2','2020-1','2019-2','2019-1']);
-  const [reports, setReports] = useState(['최종보고서', '기말발표', 'MVP'])
+  const style = useStyles();
+
 
   const [teamName, setTeamName] = useState('');
   const [teamMembers, setTeamMembers] = useState([
@@ -111,7 +112,6 @@ function ProposalForm() {
   const [courseError, setCourseError] = useState(false);
   const [selectedSemesterError, setSelectedSemesterError] = useState(false);
 
-  const style = useStyles();
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -192,15 +192,12 @@ function ProposalForm() {
       })
       //FILES URL 링크들 저장
       const fileCollectionRef = collection(docRef, 'fileURLs')
-      fileURLssss.map((fileURL, index) => {
-        console.log(fileURL.name)
-        console.log(fileURL.URL)
-        console.log(index)
+      fileURLssss.map((fileURL, index) => 
         addDoc(fileCollectionRef, {
           name: fileURL.name,
           URL: fileURL.URL,
         })
-      })
+      )
       window.location.reload();
 
     } 
@@ -286,10 +283,16 @@ function ProposalForm() {
       )
     )
   }
-  // useEffect(() => {
-  //   if(course !== '')
-  //   setTags(course)
-  // },[course])
+  useEffect(() => {
+    COURSE_REPORTS.map((report, index)=> {
+      let reportObj = {
+          id: index,
+          fileName: report,
+          file: '',
+        }
+      setSelectedFiles(reportObj)
+    })
+  },[])
 
   useEffect(() => {
     
@@ -347,7 +350,7 @@ function ProposalForm() {
               }
             }}
           >
-            {courseList.map((course, index)=> {
+            {ICT_COURSES.map((course, index)=> {
               return <MenuItem key={index} value={course}>{course}</MenuItem>
             })}
           </Select>
@@ -374,7 +377,7 @@ function ProposalForm() {
               }
             }}
           >
-            {semesters.map((year, index)=> {
+            {SEMESTERS.map((year, index)=> {
               return <MenuItem key={index} value={year}>{year}</MenuItem>
             })}
           </Select>
@@ -527,7 +530,7 @@ function ProposalForm() {
         </>
         <br></br>
         
-        {reports.map((report, index)=> {
+        {COURSE_REPORTS.map((report, index)=> {
           return (
             <FilesWrapper key={index}>
               <Box sx={{
