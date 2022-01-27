@@ -356,7 +356,7 @@ function ProposalForm() {
   },[])
 
   useEffect(() => {
-    console.log(links)
+    
   },[countMember,countLinks])
 
   useEffect(() => {

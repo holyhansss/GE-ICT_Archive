@@ -1,10 +1,10 @@
 import  { React, useState, useEffect, Children } from 'react';
 import styled from 'styled-components';
 import { firebase } from "../../firebase";
-import { getFirestore, collection, getDocs, where } from "firebase/firestore";
+import { getFirestore, collection, getDocs, where, query, limit, startAfter, startAt, orderBy } from "firebase/firestore";
 import { Link } from "react-router-dom";
 import { Card, CardHeader, CardContent, CardActions, makeStyles, Select, MenuItem ,Button} from "@material-ui/core";
-import {  } from '@material-ui/core/IconButton';
+import { useBottomScrollListener } from 'react-bottom-scroll-listener';
 import oc from 'open-color';
 import { ICT_COURSES, SEMESTERS } from '../../commons/constants';
 
@@ -87,25 +87,104 @@ const Contents = ({ year }) => {
     const [content, setContent] = useState([]);
     const [years, setYears] = useState(year);
     const [course, setCourse] = useState('제품 기획 및 개발')
+    const [selectedCourse, setSelectedCourse] = useState('제품 기획 및 개발');
     const [semester, setSemester] = useState(year);
+    const [lastVisible, setLastVisible] = useState(0);
 
-    const FetchContents = async () => {
-        const data = await getDocs(collection(db, course), where("semester", "==", semester));
-        setContent(data.docs.map((doc) => ({...doc.data(), id: doc.id})));        
-    };
+    // const FetchContents = async () => {
+    //     //const data = await getDocs(collection(db, course), where("semester", "==", semester));
+    //     const data = await getDocs(collection(db, course));
+    //     setContent(data.docs.map((doc) => ({...doc.data(), id: doc.id})));        
+    // };
+
+
+    const getFirestContents = async () => {
+        setCourse(selectedCourse)
+        
+        let q = await query(collection(db, selectedCourse), limit(6), orderBy('image_url'))
+        getDocs(q).then((snapshot) => {
+
+            setContent((contents) => {
+              const arr = [...contents]
+              snapshot.forEach((doc) => {
+                arr.push({...doc.data(), id: doc.id})
+              })
+              return arr
+            })
+            if (snapshot.docs.length === 0) {
+                setLastVisible(-1)
+            } else {
+                setLastVisible(snapshot.docs[snapshot.docs.length - 1])
+            }
+          })
+    }
+
+
+    const getNextContents = () => {
+        let q;
+        //console.log(lastVisible)
+        console.log('asdfasfd')
+        // orderBy와 startAfter은 같아야함
+        //https://dev.to/hadi/infinite-scroll-in-firebase-firestore-and-react-js-55g3
+        if (lastVisible === -1) {
+            return
+        } else if (lastVisible) {
+            q = query(collection(db, course), limit(3), orderBy('image_url'), startAfter(lastVisible))
+            //console.log(q)
+        } else {
+            //console.log('aa')
+            q = query(collection(db, course), limit(6), orderBy('image_url'))
+        }
+
+        getDocs(q).then((snapshot) => {
+            //console.log('works')
+            setContent((contents) => {
+              const arr = [...contents]
+              snapshot.forEach((doc) => {
+                arr.push({...doc.data(), id: doc.id})
+              })
+              return arr
+            })
+            if (snapshot.docs.length === 0) {
+                setLastVisible(-1)
+            } else {
+                setLastVisible(snapshot.docs[snapshot.docs.length - 1])
+            }
+          })
+    
+    }
+    const getNewCourseContents = () => {
+        if(selectedCourse !== course){
+            setCourse(selectedCourse)
+            setLastVisible(0)
+            setContent([])
+            getFirestContents()
+            console.log('heh')
+        }
+        
+    }
+
 
     useEffect(() => {
-        
-        FetchContents();
+        getFirestContents();
+        //FetchContents();
         setLoading(false)
-        console.log('heheh')
+        
     },[])
 
     useEffect(() => {
-
+        console.log(course, selectedCourse,lastVisible, content,'aaaaaaa')
     },[content])
+    
+    useEffect(() => {
+        console.log(course, selectedCourse,lastVisible, content)
+
+    },[course])
+
+    useBottomScrollListener(getNextContents)
+
     const list = content.map((doc, index) => (
-        loading == false ?
+        loading === false ?
         <Card key={index} className={style.card} >
             <Link key={index}
             to={`/detailpages/${index}`}
@@ -124,7 +203,7 @@ const Contents = ({ year }) => {
                 <CardHeader title={doc.teamName} className={style.team_name}></CardHeader>
                 <CardContent>
                     {
-                    doc.hashTag != undefined ?
+                    doc.hashTag !== undefined ?
                     doc.hashTag.map((tag, index)=> 
                     <Tags key={index}>{tag}</Tags>
                     )
@@ -141,12 +220,11 @@ const Contents = ({ year }) => {
             <SelectWrapper className={style.select}>
                 <Select
                     labelId='course-lable'
-                    value={course}
+                    value={selectedCourse}
                     fullWidth
                     className={style.select_course}
                     onChange={(e) => {
-                    setCourse(e.target.value)
-
+                        setSelectedCourse(e.target.value)
                     }}
                     variant='standard'
                 >
@@ -154,7 +232,7 @@ const Contents = ({ year }) => {
                     return <MenuItem key={index} value={course}>{course}</MenuItem>
                     })}
                 </Select>
-                <Select
+                {/* <Select
                     labelId='semester-lable'
                     value={semester}
                     fullWidth
@@ -168,10 +246,10 @@ const Contents = ({ year }) => {
                     {SEMESTERS.map((semester, index)=> {
                     return <MenuItem key={index} value={semester}>{semester}</MenuItem>
                     })}
-                </Select>
+                </Select> */}
                 <Button
                     variant='outlined'
-                    onClick={FetchContents}
+                    onClick={getNewCourseContents}
                     className={style.select_button}>
                     이동
                 </Button>
