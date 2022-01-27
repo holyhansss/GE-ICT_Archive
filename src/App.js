@@ -4,6 +4,7 @@ import MainPage from './pages/mainPage';
 import DetailPage from './pages/detailedPage.js';
 import ProposalPage from './pages/proposalPage.js';
 import { getAuth } from 'firebase/auth';
+import SearchPage from './pages/searchPage';
 
 function App() {
   getAuth().signOut();
@@ -15,7 +16,8 @@ function App() {
         <Route path='/detailpages/*' >
           <Route path=":id" element={<DetailPage />} />
         </Route>
-        <Route path='/proposalpage' element={<ProposalPage/>} ></Route>  
+        <Route path='/searchpage' element={<SearchPage/>} ></Route>
+        <Route path='proposalpage/' element={<ProposalPage/>} ></Route>  
       </Routes>
     </BrowserRouter>
   );

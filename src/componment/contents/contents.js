@@ -3,7 +3,9 @@ import styled from 'styled-components';
 import { firebase } from "../../firebase";
 import { getFirestore, collection, getDocs, where, query, limit, startAfter, startAt, orderBy } from "firebase/firestore";
 import { Link } from "react-router-dom";
-import { Card, CardHeader, CardContent, CardActions, makeStyles, Select, MenuItem ,Button} from "@material-ui/core";
+import { Card, CardHeader, CardContent, TextField, makeStyles, Select, MenuItem ,Button} from "@material-ui/core";
+import { useNavigate } from "react-router-dom";
+
 import { useBottomScrollListener } from 'react-bottom-scroll-listener';
 import oc from 'open-color';
 import { ICT_COURSES, SEMESTERS } from '../../commons/constants';
@@ -22,9 +24,9 @@ const useStyles = makeStyles({
         color: 'black',
         margin: '0px',
     },
-    select: {
-        margin: '100px 0px 0px 0px',
-    },
+    // select: {
+    //     margin: '100px 0px 0px 0px',
+    // },
     select_course: {
         width: '13%',
     },
@@ -33,21 +35,41 @@ const useStyles = makeStyles({
     },
     select_button: {
         margin: '0px 25px 0px 20px',
-    }
+    },
+    searchBar: {
+        color: 'green',
+    },
+    notchedOutline: {
+        borderColor: `${oc.teal[9]}`,
+
+      }
+    
 });
 
 const Positioner = styled.div`
     display: flex;
-    justify-content: space-around;
+    justify-content: space-evenly;
     flex-wrap: wrap;
     width: 100%;
 `;
+
+const StyledForm = styled.form`
+  width: 300px;
+//   background-color: orange;
+`
+
+const SearchSelectWrapper = styled.div`
+    display: flex;
+    margin: 100px 50px 0px 50px;
+    text-align: right;
+    align-items: center;
+    justify-content: space-between;
+`
 const SelectWrapper = styled.div`
     display: flex;
     text-align: right;
     align-items: center;
     justify-content: right;
-  
 `
 const MainImage = styled.img`
     flex: 3;
@@ -83,13 +105,14 @@ const Contents = ({ year }) => {
 
     const db = getFirestore();
     const [loading, setLoading] = useState(true);
-    //const course = "제품 기획 및 개발"
     const [content, setContent] = useState([]);
     const [years, setYears] = useState(year);
     const [course, setCourse] = useState('제품 기획 및 개발')
     const [selectedCourse, setSelectedCourse] = useState('제품 기획 및 개발');
     const [semester, setSemester] = useState(year);
     const [lastVisible, setLastVisible] = useState(0);
+    const [searchKeyword, setSearchKeyword] = useState('');
+    const navigate = useNavigate();
 
     // const FetchContents = async () => {
     //     //const data = await getDocs(collection(db, course), where("semester", "==", semester));
@@ -100,8 +123,9 @@ const Contents = ({ year }) => {
 
     const getFirestContents = async () => {
         setCourse(selectedCourse)
-        
-        let q = await query(collection(db, selectedCourse), limit(6), orderBy('image_url'))
+        setContent([])
+
+        let q = await query(collection(db, selectedCourse), limit(9), orderBy('image_url'))
         getDocs(q).then((snapshot) => {
 
             setContent((contents) => {
@@ -122,35 +146,32 @@ const Contents = ({ year }) => {
 
     const getNextContents = () => {
         let q;
-        //console.log(lastVisible)
-        console.log('asdfasfd')
         // orderBy와 startAfter은 같아야함
-        //https://dev.to/hadi/infinite-scroll-in-firebase-firestore-and-react-js-55g3
+        // https://dev.to/hadi/infinite-scroll-in-firebase-firestore-and-react-js-55g3
         if (lastVisible === -1) {
             return
         } else if (lastVisible) {
             q = query(collection(db, course), limit(3), orderBy('image_url'), startAfter(lastVisible))
-            //console.log(q)
         } else {
-            //console.log('aa')
-            q = query(collection(db, course), limit(6), orderBy('image_url'))
+            q = query(collection(db, course), limit(9), orderBy('image_url'))
         }
-
-        getDocs(q).then((snapshot) => {
-            //console.log('works')
-            setContent((contents) => {
-              const arr = [...contents]
-              snapshot.forEach((doc) => {
-                arr.push({...doc.data(), id: doc.id})
+        if(lastVisible !== -1){
+            getDocs(q).then((snapshot) => {
+                setContent((contents) => {
+                  const arr = [...contents]
+                  snapshot.forEach((doc) => {
+                    arr.push({...doc.data(), id: doc.id})
+                  })
+                  return arr
+                })
+                if (snapshot.docs.length === 0) {
+                    setLastVisible(-1)
+                } else {
+                    setLastVisible(snapshot.docs[snapshot.docs.length - 1])
+                }
               })
-              return arr
-            })
-            if (snapshot.docs.length === 0) {
-                setLastVisible(-1)
-            } else {
-                setLastVisible(snapshot.docs[snapshot.docs.length - 1])
-            }
-          })
+        }
+        
     
     }
     const getNewCourseContents = () => {
@@ -159,27 +180,26 @@ const Contents = ({ year }) => {
             setLastVisible(0)
             setContent([])
             getFirestContents()
-            console.log('heh')
         }
         
     }
 
+    const handleSearchSubmit = () => {
+        navigate(
+            "/searchpage", 
+            {state: {
+                searchKeyword: "aa"
+            }});
+    }
 
     useEffect(() => {
         getFirestContents();
-        //FetchContents();
         setLoading(false)
         
     },[])
-
     useEffect(() => {
-        console.log(course, selectedCourse,lastVisible, content,'aaaaaaa')
     },[content])
-    
-    useEffect(() => {
-        console.log(course, selectedCourse,lastVisible, content)
 
-    },[course])
 
     useBottomScrollListener(getNextContents)
 
@@ -217,43 +237,55 @@ const Contents = ({ year }) => {
     
     return (
         <div>
-            <SelectWrapper className={style.select}>
-                <Select
-                    labelId='course-lable'
-                    value={selectedCourse}
-                    fullWidth
-                    className={style.select_course}
-                    onChange={(e) => {
-                        setSelectedCourse(e.target.value)
-                    }}
-                    variant='standard'
+            <SearchSelectWrapper>
+                <StyledForm
+                    noValidate 
+                    autoComplete='off'
+                    onSubmit={handleSearchSubmit}
                 >
-                    {ICT_COURSES.map((course, index)=> {
-                    return <MenuItem key={index} value={course}>{course}</MenuItem>
-                    })}
-                </Select>
-                {/* <Select
-                    labelId='semester-lable'
-                    value={semester}
-                    fullWidth
-                    className={style.select_semester}
+                <TextField
                     onChange={(e) => {
-                    setSemester(e.target.value)
+                        setSearchKeyword(e.target.value)
+                        // setTeamName(e.target.value)
+                        // if(e.target.value !== ''){
+                        // setTeamNameError(false)
+                        // }
                     }}
-                    variant='standard'
-
-                >
-                    {SEMESTERS.map((semester, index)=> {
-                    return <MenuItem key={index} value={semester}>{semester}</MenuItem>
-                    })}
-                </Select> */}
-                <Button
+                    InputProps={{
+                        classes: {
+                          notchedOutline: style.notchedOutline
+                        }
+                      }}
+                    label='검색어를 입력하세요'
                     variant='outlined'
-                    onClick={getNewCourseContents}
-                    className={style.select_button}>
-                    이동
-                </Button>
-            </SelectWrapper>
+                    fullWidth
+                    />  
+                </StyledForm>
+
+                <SelectWrapper className={style.select}>
+                    <Select
+                        labelId='course-lable'
+                        value={selectedCourse}
+                        fullWidth
+                        //className={style.select_course}
+                        onChange={(e) => {
+                            setSelectedCourse(e.target.value)
+                        }}
+                        variant='standard'
+                    >
+                        {ICT_COURSES.map((course, index)=> {
+                        return <MenuItem key={index} value={course}>{course}</MenuItem>
+                        })}
+                    </Select>
+                    <Button
+                        variant='outlined'
+                        onClick={getNewCourseContents}
+                        //className={style.select_button}
+                        >
+                        이동
+                    </Button>
+                </SelectWrapper>
+            </SearchSelectWrapper>
             <Positioner>
                 {list}
             </Positioner>

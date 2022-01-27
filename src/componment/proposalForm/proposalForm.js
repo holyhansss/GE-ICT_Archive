@@ -1,6 +1,6 @@
 import {React, useState, useEffect} from 'react';
 import { Typography,Input, Box, Button, TextField, Select, MenuItem, FormControl, InputLabel, makeStyles } from '@material-ui/core';
-import { Firestore, snapshotEqual } from 'firebase/firestore';
+import { Firestore } from 'firebase/firestore';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 import ReactTagInput from "@pathofdev/react-tag-input";
