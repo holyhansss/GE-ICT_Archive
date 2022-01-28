@@ -57,7 +57,6 @@ const Positioner = styled.div`
 
 const StyledForm = styled.form`
   width: 300px;
-//   background-color: orange;
 `
 
 const SearchSelectWrapper = styled.div`
@@ -127,7 +126,7 @@ const Contents = ({ year }) => {
         setCourse(selectedCourse)
         setContent([])
 
-        let q = await query(collection(db, selectedCourse), limit(9), orderBy('image_url'))
+        let q = await query(collection(db, 'Course Projects'), where('course', '==', selectedCourse) ,limit(9), orderBy('image_url'))
         getDocs(q).then((snapshot) => {
 
             setContent((contents) => {
@@ -153,9 +152,9 @@ const Contents = ({ year }) => {
         if (lastVisible === -1) {
             return
         } else if (lastVisible) {
-            q = query(collection(db, course), limit(3), orderBy('image_url'), startAfter(lastVisible))
+            q = query(collection(db, 'Course Projects'), limit(3), orderBy('image_url'), startAfter(lastVisible))
         } else {
-            q = query(collection(db, course), limit(9), orderBy('image_url'))
+            q = query(collection(db, 'Course Projects'), limit(9), orderBy('image_url'))
         }
         if(lastVisible !== -1){
             getDocs(q).then((snapshot) => {
