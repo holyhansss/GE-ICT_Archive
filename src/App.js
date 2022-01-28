@@ -1,9 +1,11 @@
 import { React } from 'react';
+
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { getAuth } from 'firebase/auth';
+
 import MainPage from './pages/mainPage';
 import DetailPage from './pages/detailedPage.js';
 import ProposalPage from './pages/proposalPage.js';
-import { getAuth } from 'firebase/auth';
 import SearchPage from './pages/searchPage';
 
 function App() {

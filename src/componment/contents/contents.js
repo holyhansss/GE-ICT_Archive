@@ -1,13 +1,15 @@
-import  { React, useState, useEffect, Children } from 'react';
-import styled from 'styled-components';
+import  { React, useState, useEffect } from 'react';
+
 import { firebase } from "../../firebase";
 import { getFirestore, collection, getDocs, where, query, limit, startAfter, startAt, orderBy } from "firebase/firestore";
 import { Link } from "react-router-dom";
-import { Card, CardHeader, CardContent, TextField, makeStyles, Select, MenuItem ,Button} from "@material-ui/core";
 import { useNavigate } from "react-router-dom";
-
 import { useBottomScrollListener } from 'react-bottom-scroll-listener';
+
+import { Card, CardHeader, CardContent, TextField, makeStyles, Select, MenuItem ,Button} from "@material-ui/core";
+import styled from 'styled-components';
 import oc from 'open-color';
+
 import { ICT_COURSES, SEMESTERS } from '../../commons/constants';
 
 const useStyles = makeStyles({
@@ -187,8 +189,9 @@ const Contents = ({ year }) => {
     const handleSearchSubmit = () => {
         navigate(
             "/searchpage", 
-            {state: {
-                searchKeyword: "aa"
+            {
+                state: {
+                    searchKeyword: searchKeyword
             }});
     }
 
