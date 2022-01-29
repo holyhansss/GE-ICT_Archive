@@ -125,13 +125,11 @@ const Contents = ({ year }) => {
     const getFirestContents = async () => {
         setCourse(selectedCourse)
         console.log(content.length)
-        if(content.length > 0){
+        if(content.length === 0){
             setContent([])
-
+            console.log('get first contents')
             let q = await query(collection(db, 'Course Projects'), where('course', '==', selectedCourse) ,limit(9), orderBy('image_url'))
             getDocs(q).then((snapshot) => {
-                console.log('hehe')
-
                 setContent((contents) => {
                 const arr = [...contents]
                 snapshot.forEach((doc) => {
@@ -152,16 +150,16 @@ const Contents = ({ year }) => {
     const getNextContents = () => {
         console.log('aaa');
         let q;
+        console.log(q)
         // orderBy와 startAfter은 같아야함
         // https://dev.to/hadi/infinite-scroll-in-firebase-firestore-and-react-js-55g3
         if (lastVisible === -1) {
             return
         } else if (lastVisible) {
             q = query(collection(db, 'Course Projects'), where('course', '==', selectedCourse), limit(3), orderBy('image_url'), startAfter(lastVisible))
-        } else {
-            q = query(collection(db, 'Course Projects'), where('course', '==', selectedCourse), limit(9), orderBy('image_url'))
-        }
-        if(lastVisible !== -1){
+        } 
+        
+        if(lastVisible !== -1 && q !== undefined){
             getDocs(q).then((snapshot) => {
                 setContent((contents) => {
                   const arr = [...contents]
