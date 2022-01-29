@@ -352,15 +352,18 @@ function ProposalForm() {
   }
 
   useEffect(() => {
-    COURSE_REPORTS.map((report, index)=> {
-      let reportObj = {
-          id: index,
-          fileName: report,
-          file: '',
-        }
-      setSelectedFiles((reports) => [...reports, reportObj]);
-    })
+    if(selectedFiles.length === 0){
+      COURSE_REPORTS.map((report, index)=> {
+        let reportObj = {
+            id: index,
+            fileName: report,
+            file: '',
+          }
+        setSelectedFiles((reports) => [...reports, reportObj]);
+      })
+    }
   },[])
+  
   useEffect(() => {
     console.log(selectedFiles)
   },[selectedFiles])
@@ -373,6 +376,8 @@ function ProposalForm() {
       setImageUrl(URL.createObjectURL(selectedImage));
     }
   }, [selectedImage]);
+
+
 
   return (
     <div>
@@ -571,7 +576,12 @@ function ProposalForm() {
           maxTags={10}
           removeOnBackspace={true}
           placeholder="HashTag: 단어 치구 Enter!"
-          onChange={(newTags) => setTags(newTags)}
+          onChange={(newTags) => {
+            if(newTags.length>0){
+              newTags[newTags.length-1] = newTags[newTags.length-1].trim()
+            }
+            setTags(newTags)  
+          }}
         />
         <CreateInputMember>
           {countLinks.map((item, index)=> {
