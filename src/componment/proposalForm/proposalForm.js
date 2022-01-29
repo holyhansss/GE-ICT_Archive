@@ -3,6 +3,7 @@ import {React, useState, useEffect} from 'react';
 import { Firestore } from 'firebase/firestore';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
+import { getAuth } from 'firebase/auth';
 import ReactTagInput from "@pathofdev/react-tag-input";
 
 import "@pathofdev/react-tag-input/build/index.css";
@@ -159,6 +160,7 @@ function ProposalForm() {
       //console.log(teamName, teamDesc, selectedSemester, teamMembers, course)
       const db = getFirestore();
       const storage = getStorage();
+      const auth = getAuth();
       const fileURLssss = [];
       const date = new Date()
       const currentTime = date.getFullYear() + '' + (date.getMonth()+1) + '' +date.getDate() + '' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
@@ -170,7 +172,7 @@ function ProposalForm() {
       const imageURL = await getDownloadURL(imageStorageRef)
       //upload files
       for(let i=0; i<selectedFiles.length;i++ ){
-        if(selectedFiles[i].file !== ''){
+        if(selectedFiles[i].file !== '' && selectedFiles[i].file !== undefined){
           let filename = selectedFiles[i].fileName;
           console.log(selectedFiles[i].fileName)
           let storageRef = ref(storage, `${selectedFiles[i].fileName}${currentTime}`);
@@ -185,12 +187,15 @@ function ProposalForm() {
       }
       
 
-      const docRef = await addDoc(collection(db, `${course}`), {
+      const docRef = await addDoc(collection(db, 'Course Projects'), {
         teamName: teamName,
         project_description: teamDesc,
         semester: selectedSemester,
         image_url: imageURL,
         hashTag: tags,
+        course: course,
+        approved: false,
+        owner: auth.currentUser.email,
       })
       // member 저장
       const memberCollectionRef = collection(docRef, 'members')
@@ -339,13 +344,13 @@ function ProposalForm() {
 
 
   const handleFileChange = (targetId, _file) => {
-    console.log(targetId)
     setSelectedFiles(
       selectedFiles.map((selectedFile) => 
         selectedFile.id === targetId ? { ...selectedFile, file: _file } : selectedFile
       )
     )
   }
+
   useEffect(() => {
     COURSE_REPORTS.map((report, index)=> {
       let reportObj = {
@@ -353,12 +358,14 @@ function ProposalForm() {
           fileName: report,
           file: '',
         }
-      setSelectedFiles(reportObj)
+      setSelectedFiles((reports) => [...reports, reportObj]);
     })
   },[])
+  useEffect(() => {
+    console.log(selectedFiles)
+  },[selectedFiles])
 
   useEffect(() => {
-    
   },[countMember,countLinks])
 
   useEffect(() => {
@@ -677,6 +684,7 @@ function ProposalForm() {
                   onChange={(e)=> {
                     handleFileChange(index, e.target.files[0])
                   }}
+                  
                 />
               </Button>
             </FilesWrapper>

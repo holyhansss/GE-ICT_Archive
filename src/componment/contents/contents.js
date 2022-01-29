@@ -10,7 +10,7 @@ import { Card, CardHeader, CardContent, TextField, makeStyles, Select, MenuItem 
 import styled from 'styled-components';
 import oc from 'open-color';
 
-import { ICT_COURSES, SEMESTERS } from '../../commons/constants';
+import { ICT_COURSES } from '../../commons/constants';
 
 const useStyles = makeStyles({
     card: {
@@ -124,37 +124,42 @@ const Contents = ({ year }) => {
 
     const getFirestContents = async () => {
         setCourse(selectedCourse)
-        setContent([])
+        console.log(content.length)
+        if(content.length > 0){
+            setContent([])
 
-        let q = await query(collection(db, 'Course Projects'), where('course', '==', selectedCourse) ,limit(9), orderBy('image_url'))
-        getDocs(q).then((snapshot) => {
+            let q = await query(collection(db, 'Course Projects'), where('course', '==', selectedCourse) ,limit(9), orderBy('image_url'))
+            getDocs(q).then((snapshot) => {
+                console.log('hehe')
 
-            setContent((contents) => {
-              const arr = [...contents]
-              snapshot.forEach((doc) => {
-                arr.push({...doc.data(), id: doc.id})
-              })
-              return arr
+                setContent((contents) => {
+                const arr = [...contents]
+                snapshot.forEach((doc) => {
+                    arr.push({...doc.data(), id: doc.id})
+                })
+                return arr
+                })
+                if (snapshot.docs.length === 0) {
+                    setLastVisible(-1)
+                } else {
+                    setLastVisible(snapshot.docs[snapshot.docs.length - 1])
+                }
             })
-            if (snapshot.docs.length === 0) {
-                setLastVisible(-1)
-            } else {
-                setLastVisible(snapshot.docs[snapshot.docs.length - 1])
-            }
-          })
+        }
     }
 
 
     const getNextContents = () => {
+        console.log('aaa');
         let q;
         // orderBy와 startAfter은 같아야함
         // https://dev.to/hadi/infinite-scroll-in-firebase-firestore-and-react-js-55g3
         if (lastVisible === -1) {
             return
         } else if (lastVisible) {
-            q = query(collection(db, 'Course Projects'), limit(3), orderBy('image_url'), startAfter(lastVisible))
+            q = query(collection(db, 'Course Projects'), where('course', '==', selectedCourse), limit(3), orderBy('image_url'), startAfter(lastVisible))
         } else {
-            q = query(collection(db, 'Course Projects'), limit(9), orderBy('image_url'))
+            q = query(collection(db, 'Course Projects'), where('course', '==', selectedCourse), limit(9), orderBy('image_url'))
         }
         if(lastVisible !== -1){
             getDocs(q).then((snapshot) => {
@@ -200,6 +205,7 @@ const Contents = ({ year }) => {
         
     },[])
     useEffect(() => {
+        console.log(content)
     },[content])
 
 

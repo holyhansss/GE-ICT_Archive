@@ -80,9 +80,9 @@ const DetailPage = () => {
   //fetch memebrs, files and links
   useEffect(() => {
     const FetchContents = async () => {
-        const memberData = await getDocs(collection(db, course, contentInfo.id, "members"));
+        const memberData = await getDocs(collection(db, 'Course Projects', contentInfo.id, "members"));
         setMembers(memberData.docs.map((doc) => ({...doc.data(), id: doc.id})));        
-        const fileData = await getDocs(collection(db, course, contentInfo.id, "fileURLs"));
+        const fileData = await getDocs(collection(db, 'Course Projects', contentInfo.id, "fileURLs"));
         setFiles(fileData.docs.map((doc) => ({...doc.data(), id: doc.id}))); 
       };
     FetchContents();

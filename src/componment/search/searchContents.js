@@ -20,10 +20,13 @@ const SearchContents = () => {
     const db = getFirestore();
     const { state } = useLocation();
     const [ searchKeyword, setSearchKeyword] = useState(state.searchKeyword);
+    const [ contents, setContents ] = useState();
+
     const style = useStyles();
     
     const handleSearchSubmit = (e) => {
-        e.preventDefalut();
+
+
     }
 
 
@@ -31,6 +34,27 @@ const SearchContents = () => {
         
     }
 
+    const getFirestContents = async () => {
+        // if(searchKeyword !== ''){
+        //     let q = await query(collection(db, 'Course Project'), limit(9), orderBy('image_url'))
+        //     getDocs(q).then((snapshot) => {
+    
+        //         setContent((contents) => {
+        //           const arr = [...contents]
+        //           snapshot.forEach((doc) => {
+        //             arr.push({...doc.data(), id: doc.id})
+        //           })
+        //           return arr
+        //         })
+        //         if (snapshot.docs.length === 0) {
+        //             setLastVisible(-1)
+        //         } else {
+        //             setLastVisible(snapshot.docs[snapshot.docs.length - 1])
+        //         }
+        //       })
+        // }
+        
+    }
 
 
     return (
