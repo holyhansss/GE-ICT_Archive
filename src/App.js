@@ -9,7 +9,7 @@ import ProposalPage from './pages/proposalPage.js';
 import SearchPage from './pages/searchPage';
 
 function App() {
-  getAuth().signOut();
+  //getAuth().signOut();
   
   return (
     <BrowserRouter>

@@ -101,16 +101,14 @@ const TeamDesc = styled.div`
     line-height: 1.8em;
 
 `
-const Contents = ({ year }) => {
+const Contents = () => {
     const style = useStyles();
 
     const db = getFirestore();
     const [loading, setLoading] = useState(true);
     const [content, setContent] = useState([]);
-    const [years, setYears] = useState(year);
     const [course, setCourse] = useState('제품 기획 및 개발')
     const [selectedCourse, setSelectedCourse] = useState('제품 기획 및 개발');
-    const [semester, setSemester] = useState(year);
     const [lastVisible, setLastVisible] = useState(0);
     const [searchKeyword, setSearchKeyword] = useState('');
     const navigate = useNavigate();
@@ -216,7 +214,7 @@ const Contents = ({ year }) => {
             to={`/detailpages/${index}`}
             state={{
                 id: index,
-                course: course,
+                course: doc.course,
                 contentInfo: doc,
 
             }}

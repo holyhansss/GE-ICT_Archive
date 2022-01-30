@@ -6,12 +6,10 @@ import { SEMESTERS } from '../commons/constants';
 
 function MainPage() {
   
-  const [year, setYear] = useState(SEMESTERS[0]);
-
   return (
     <div>
       <Header></Header>
-      <Contents year={year}></Contents>
+      <Contents></Contents>
       <Footer></Footer>
     </div>
 
