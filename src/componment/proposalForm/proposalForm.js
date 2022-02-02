@@ -217,6 +217,15 @@ function ProposalForm() {
           URL: fileURL.URL,
         })
       )
+      // Link들 저장
+      // const LinksCollectionRef = collection(docRef, 'Links')
+      // links.map((links)=> {
+      //   addDoc(LinksCollectionRef, {
+      //     name: link.name,
+      //     URL: link.link,
+      //   })
+      // })
+
       window.location.reload();
 
     } 
