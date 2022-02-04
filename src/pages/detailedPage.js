@@ -16,6 +16,9 @@ const useStyles = makeStyles({
     color: 'black',
     textDecoration: 'none',
     margin: '0px 0px 0px 10px',
+  },
+  linksContainer: {
+    margin: '0px 0px 30px 0px',
   }
 });
 
@@ -76,7 +79,7 @@ const DetailPage = () => {
   const { id } = useParams();
   const [members, setMembers] = useState(null);
   const [files, setFiles] = useState(null);
-  
+  const [links, setLinks] = useState([]);
   //fetch memebrs, files and links
   useEffect(() => {
     const FetchContents = async () => {
@@ -84,6 +87,8 @@ const DetailPage = () => {
         setMembers(memberData.docs.map((doc) => ({...doc.data(), id: doc.id})));        
         const fileData = await getDocs(collection(db, 'Course Projects', contentInfo.id, "fileURLs"));
         setFiles(fileData.docs.map((doc) => ({...doc.data(), id: doc.id}))); 
+        const linksData = await getDocs(collection(db, 'Course Projects', contentInfo.id, "Links"));
+        setLinks(linksData.docs.map((doc) => ({...doc.data(), id: doc.id}))); 
       };
     FetchContents();
   },[contentInfo])
@@ -111,6 +116,16 @@ const DetailPage = () => {
             </TeamMembers>
             <ProjectDesc>Abstract : {contentInfo.project_description}</ProjectDesc>
             {
+                links.length === 0
+                ? <div></div>
+                : links.map((link, index) => {
+                    if(link.name === '' && link.URL === '')
+                      return <div key={index}></div>
+                    else
+                      return <div key={index} className={style.linksContainer}>{link.name}: {link.URL}</div>
+                  })
+              }
+            {
                 files == null 
                 ? <div></div>
                 : files.map((file, index) => 
@@ -120,6 +135,7 @@ const DetailPage = () => {
                 </Button>
                 )
               }
+              
           </Content>
         </ContentWrapper>
         
