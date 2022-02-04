@@ -1,7 +1,7 @@
 import  { React, useState, useEffect } from 'react';
 
 import { firebase } from "../../firebase";
-import { getFirestore, collection, getDocs, where, query, limit, startAfter, startAt, orderBy } from "firebase/firestore";
+import { getFirestore, collection, getDocs, where, query, limit, startAfter, startAt, orderBy, doc } from "firebase/firestore";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useBottomScrollListener } from 'react-bottom-scroll-listener';
@@ -146,21 +146,22 @@ const Contents = () => {
 
 
     const getNextContents = () => {
-        console.log('aaa');
         let q;
-        console.log(q)
         // orderBy와 startAfter은 같아야함
         // https://dev.to/hadi/infinite-scroll-in-firebase-firestore-and-react-js-55g3
         if (lastVisible === -1) {
             return
         } else if (lastVisible) {
-            q = query(collection(db, 'Course Projects'), where('course', '==', selectedCourse), limit(3), orderBy('image_url'), startAfter(lastVisible))
+            q = query(collection(db, 'Course Projects'), where('course', '==', selectedCourse), limit(6), orderBy('image_url'), startAfter(lastVisible))
         } 
         
         if(lastVisible !== -1 && q !== undefined){
             getDocs(q).then((snapshot) => {
                 setContent((contents) => {
                   const arr = [...contents]
+                //   if(!content.includes(doc)){
+
+                //   }
                   snapshot.forEach((doc) => {
                     arr.push({...doc.data(), id: doc.id})
                   })
