@@ -126,7 +126,7 @@ const Contents = () => {
         if(content.length === 0){
             setContent([])
             console.log('get first contents')
-            let q = await query(collection(db, 'Course Projects'), where('course', '==', selectedCourse) ,limit(9), orderBy('image_url'))
+            let q = await query(collection(db, 'Course Projects'), where('course', '==', selectedCourse) ,limit(9), orderBy('createdAt', 'desc'))
             getDocs(q).then((snapshot) => {
                 setContent((contents) => {
                 const arr = [...contents]
@@ -152,7 +152,7 @@ const Contents = () => {
         if (lastVisible === -1) {
             return
         } else if (lastVisible) {
-            q = query(collection(db, 'Course Projects'), where('course', '==', selectedCourse), limit(6), orderBy('image_url'), startAfter(lastVisible))
+            q = query(collection(db, 'Course Projects'), where('course', '==', selectedCourse), limit(6), orderBy('createdAt', 'desc'), startAfter(lastVisible))
         } 
         
         if(lastVisible !== -1 && q !== undefined){
