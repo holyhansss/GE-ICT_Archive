@@ -85,7 +85,7 @@ function ProposalForm() {
     {
       id: 0,
       name: '',
-      link: '',
+      URL: '',
     },
   ]);
 
@@ -155,7 +155,7 @@ function ProposalForm() {
     if(selectedSemester === ''){
       setSelectedSemesterError(true)
     }
-    
+
     if(teamName && teamDesc && course && selectedSemester && teamMembers && selectedImage){
       //console.log(teamName, teamDesc, selectedSemester, teamMembers, course)
       const db = getFirestore();
@@ -163,7 +163,8 @@ function ProposalForm() {
       const auth = getAuth();
       const fileURLssss = [];
       const date = new Date()
-      const currentTime = date.getFullYear() + '' + (date.getMonth()+1) + '' +date.getDate() + '' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+      //const currentTime = date.getFullYear() + '' + (date.getMonth()+1) + '' +date.getDate() + '' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+      const currentTime = Unix_timestampConv()
       console.log(currentTime);
 
       // upload main image
@@ -196,6 +197,7 @@ function ProposalForm() {
         course: course,
         approved: false,
         owner: auth.currentUser.email,
+        createdAt: currentTime,
       })
       // member 저장
       const memberCollectionRef = collection(docRef, 'members')
@@ -218,13 +220,13 @@ function ProposalForm() {
         })
       )
       // Link들 저장
-      // const LinksCollectionRef = collection(docRef, 'Links')
-      // links.map((links)=> {
-      //   addDoc(LinksCollectionRef, {
-      //     name: link.name,
-      //     URL: link.link,
-      //   })
-      // })
+      const LinksCollectionRef = collection(docRef, 'Links')
+      links.map((link)=> {
+        addDoc(LinksCollectionRef, {
+          name: link.name,
+          URL: link.URL,
+        })
+      })
 
       window.location.reload();
 
@@ -268,7 +270,7 @@ function ProposalForm() {
     const newLink = {
       id: links.length,
       name: '',
-      link: '',
+      URL: '',
     }
     setLinks(links.concat(newLink))
     console.log(links)
@@ -350,8 +352,6 @@ function ProposalForm() {
     )
   }
 
-
-
   const handleFileChange = (targetId, _file) => {
     setSelectedFiles(
       selectedFiles.map((selectedFile) => 
@@ -360,6 +360,10 @@ function ProposalForm() {
     )
   }
 
+  function Unix_timestampConv()
+  {
+      return Math.floor(new Date().getTime() / 1000);
+  }
   useEffect(() => {
     if(selectedFiles.length === 0){
       COURSE_REPORTS.map((report, index)=> {
@@ -609,8 +613,6 @@ function ProposalForm() {
                 variant='outlined'
                 color='primary'
                 fullWidth
-                required
-                //error={teamMemberNameError}
                 className={style.teamMember}
               />
               <TextField
@@ -625,8 +627,6 @@ function ProposalForm() {
                   variant='outlined'
                   color='primary'
                   fullWidth
-                  required
-                // error={teamMemberEmailError}
                   className={style.linkURL}
               />
               </div>
@@ -723,8 +723,6 @@ function ProposalForm() {
         </Button>
       </StyledForm>
       </FormWrapper>
-
-
     </div>
 
   );
