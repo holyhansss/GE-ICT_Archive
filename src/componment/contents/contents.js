@@ -147,7 +147,7 @@ const Contents = () => {
 
     const getNextContents = () => {
         let q;
-        // orderBy와 startAfter은 같아야함
+        // orderBy와 startAfter은 같아야함 
         // https://dev.to/hadi/infinite-scroll-in-firebase-firestore-and-react-js-55g3
         if (lastVisible === -1) {
             return
