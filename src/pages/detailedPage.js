@@ -2,9 +2,13 @@ import {React, useState, useEffect} from 'react';
 import { useParams, useLocation } from "react-router-dom";
 import Header from '../componment/header/header';
 import Footer from '../componment/footer/footer';
-import styled from 'styled-components';
+
 import { getFirestore, collection, getDocs} from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
+
 import { Button, makeStyles } from '@material-ui/core'
+import styled from 'styled-components';
+import oc from 'open-color';
 
 const useStyles = makeStyles({
   download: {
@@ -23,7 +27,14 @@ const useStyles = makeStyles({
   URL: {
     textDecoration: 'none',
     color: 'black',
+  },
+  loginWarning: {
+    padding: '3px 15px 3px 15px',
+    backgroundColor: `${oc.gray[4]}`,
+    fontSize: '13px', 
+    borderRadius: '30px',
   }
+
 });
 
 const ContentWrapper = styled.div`
@@ -78,13 +89,15 @@ const DetailPage = () => {
   const style = useStyles();
   
   const db = getFirestore();
+  const auth = getAuth();
+
   const location = useLocation();
   const { contentInfo, course } = location.state;
   const { id } = useParams();
   const [members, setMembers] = useState(null);
   const [files, setFiles] = useState(null);
   const [links, setLinks] = useState([]);
-  
+
   //fetch memebrs, files and links
   useEffect(() => {
     const FetchContents = async () => {
@@ -121,25 +134,38 @@ const DetailPage = () => {
             </TeamMembers>
             <ProjectDesc>Abstract : {contentInfo.project_description}</ProjectDesc>
             {
-                links.length === 0
-                ? <div></div>
-                : links.map((link, index) => {
-                    if(link.name === '' && link.URL === '')
-                      return <div key={index}></div>
-                    else
-                      return <div key={index} className={style.linksContainer}><a href={link.URL} target='_blank' className={style.URL}>{link.name}: {link.URL}</a></div>
-                  })
-              }
+                auth.currentUser === null || !auth.currentUser.email.includes("@handong.edu")
+                ? (
+                  <div className={style.loginWarning}>
+                    <div>관련 자료 및 링크를 보기 위해서는 한동대학교 공식 이메일로 로그인 해주세요</div>
+                    <div>Please log in with Handong official email to see the relevant data and links.</div>
+                  </div>
+                  )
+                : (
+                  links.length === 0
+                    ? <div></div>
+                    : links.map((link, index) => {
+                        if(link.name === '' && link.URL === '')
+                          return <div key={index}></div>
+                        else
+                          return <div key={index} className={style.linksContainer}><a href={link.URL} target='_blank' className={style.URL}>{link.name}: {link.URL}</a></div>
+                      })
+                  )    
+            }
             {
-                files == null 
+                auth.currentUser === null || !auth.currentUser.email.includes("@handong.edu")
                 ? <div></div>
-                : files.map((file, index) => 
-                <Button key={index} className={style.download}>
-                  <img src="https://img.icons8.com/material-sharp/18/000000/download--v1.png"/>
-                  <a href={file.URL} target="_blank" className={style.downloadAnchor}>{file.name} Download</a>                
-                </Button>
-                )
-              }
+                : (
+                  files == null 
+                    ? <div></div>
+                    : files.map((file, index) => 
+                    <Button key={index} className={style.download}>
+                      <img src="https://img.icons8.com/material-sharp/18/000000/download--v1.png"/>
+                      <a href={file.URL} target="_blank" className={style.downloadAnchor}>{file.name} Download</a>                
+                    </Button>
+                  ))
+            }
+            
               
           </Content>
         </ContentWrapper>
