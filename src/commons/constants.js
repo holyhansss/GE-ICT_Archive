@@ -1,8 +1,10 @@
 export const ICT_COURSES = [
     '제품 기획 및 개발',
     '웹 서비스 기획 및 실습',
-    'IDEA PROTOTYPING',
-    '인간공학',
+    'ICT 어플리케이션 개발',
+    '데이터 시각화',
+    'Ideation & Prototyping',
+    '캡스톤 디자인',
 ]
 
 export const SEMESTERS  = [
