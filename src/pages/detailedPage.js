@@ -19,6 +19,10 @@ const useStyles = makeStyles({
   },
   linksContainer: {
     margin: '0px 0px 30px 0px',
+  },
+  URL: {
+    textDecoration: 'none',
+    color: 'black',
   }
 });
 
@@ -80,6 +84,7 @@ const DetailPage = () => {
   const [members, setMembers] = useState(null);
   const [files, setFiles] = useState(null);
   const [links, setLinks] = useState([]);
+  
   //fetch memebrs, files and links
   useEffect(() => {
     const FetchContents = async () => {
@@ -110,7 +115,7 @@ const DetailPage = () => {
                 members == null 
                 ? <div></div>
                 : members.map((member, index) => 
-                    <TeamMemberInfo key={index} >{member.name} / {member.email} / {member.classOf}학번 / {member.major}</TeamMemberInfo>
+                    <TeamMemberInfo key={index} >{member.name} / {member.major}({member.classOf})</TeamMemberInfo>
                 )
               }
             </TeamMembers>
@@ -122,7 +127,7 @@ const DetailPage = () => {
                     if(link.name === '' && link.URL === '')
                       return <div key={index}></div>
                     else
-                      return <div key={index} className={style.linksContainer}>{link.name}: {link.URL}</div>
+                      return <div key={index} className={style.linksContainer}><a href={link.URL} target='_blank' className={style.URL}>{link.name}: {link.URL}</a></div>
                   })
               }
             {
