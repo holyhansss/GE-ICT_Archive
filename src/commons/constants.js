@@ -5,6 +5,7 @@ export const ICT_COURSES = [
     '데이터 시각화',
     'Ideation & Prototyping',
     '캡스톤 디자인',
+    'IDEA CENTER',
 ]
 
 export const SEMESTERS  = [
