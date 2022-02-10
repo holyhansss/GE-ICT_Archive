@@ -95,9 +95,9 @@ const SearchContents = () => {
 
     const getFirestContents = async () => {
         if(searchKeyword !== ''  && searchKeyword !== undefined && searchKeyword !== null && content.length === 0){
-            let q = await query(collection(db, 'Course Projects'), where('hashTag', 'array-contains', searchKeyword) ,limit(9))
+            let q = await query(collection(db, 'Course Projects'), where('hashTag', 'array-contains', searchKeyword), limit(9))
             getDocs(q).then((snapshot) => {
-                console.log(snapshot.docs.length);
+                //console.log(snapshot.docs.length);
                 setContent((contents) => {
                   const arr = [...contents]
                   snapshot.forEach((doc) => {

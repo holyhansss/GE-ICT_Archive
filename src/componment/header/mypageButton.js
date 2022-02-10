@@ -7,7 +7,9 @@ const LoginButtonCover = styled.div`
     width: 15%;
     margin-top: 15px;
     margin-left: 10px;
+    margin-right: 100px;
     height: 35px;
+
 `
 const LoginButtondiv = styled.div`
     background-color: ${oc.teal[7]};
@@ -22,16 +24,16 @@ const LoginButtonText = styled.span`
     font-weight: bolder;
     font-family: 'Rajdhani';
 `
-const ProposalCapstone = () => {
+const MyPageButton = () => {
     return (
         <LoginButtonCover>
-            <Link to="/ProposalPage" style={{ textDecoration: 'none' }}>
+            <Link to="/" style={{ textDecoration: 'none' }}>
                 <LoginButtondiv>
-                    <LoginButtonText>Proposal</LoginButtonText>
+                    <LoginButtonText>MyPage</LoginButtonText>
                 </LoginButtondiv>
             </Link>
         </LoginButtonCover>
     );
 
 }
-export default ProposalCapstone;
+export default MyPageButton;

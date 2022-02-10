@@ -5,12 +5,23 @@ import oc from 'open-color';
 import LoginButton from '../auth/login';
 import LogoutButton from '../auth/logout';
 import ProposalCapstone from './proposalCapstone';
+import MyPageButton from './mypageButton';
 import firebase from '../../firebase';
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut} from "firebase/auth";
 import { Link } from 'react-router-dom';
+import MyPage from '../../pages/myPage';
+import { makeStyles } from "@material-ui/core";
 
 //router쓰는 법!!
 //https://velog.io/@devstone/react-router-dom-%EC%9D%B4%ED%95%B4%ED%95%98%EA%B3%A0-%ED%99%9C%EC%9A%A9%ED%95%98%EA%B8%B0
+const useStyles = makeStyles({
+    buttons: {
+        flex: "1",
+        marginTop: "15px",
+        marginLeft: "10px",
+        height: "35px",
+    },
+});
 
 // 상단 고정, 그림자    
 const Positioner = styled.div`
@@ -57,11 +68,6 @@ const Slogan = styled.div`
     color: ${oc.teal[7]};
     font-family: 'Rajdhani';
 `;
-// 중간 여백
-const Spacer = styled.div`
-  flex: 1;
-  text-align: right;
-`;
 
 // 하단 그래디언트 테두리
 const GradientBorder = styled.div`
@@ -71,13 +77,14 @@ const GradientBorder = styled.div`
 
 const LogoutAndProposal = styled.div`
     display:flex;
-    flex-direction: row;
     flex: 1;
+    justify-content: right;
 `
 
 const Header = () => {
     const [user, setUser] = useState(null);
     const auth = getAuth();
+    const style = useStyles();
 
     useEffect(()=> {
 
@@ -103,10 +110,13 @@ const Header = () => {
                     <Slogan>Creation Beyond Technology</Slogan>
                   </Link>
                     {auth.currentUser === null
-                    ? <LoginButton handleLoginClick={handleLoginClick} />
+                    ? <LogoutAndProposal>
+                        <LoginButton handleLoginClick={handleLoginClick} />
+                      </LogoutAndProposal>
                     : <LogoutAndProposal>
-                        <ProposalCapstone/>
+                        <ProposalCapstone />
                         <LogoutButton handleLogoutClick={handleLogoutClick} />
+                        <MyPageButton />
                       </LogoutAndProposal>
                     }
               </HeaderContents>

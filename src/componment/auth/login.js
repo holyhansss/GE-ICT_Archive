@@ -11,18 +11,16 @@ const LoginButtonText = styled.span`
 `
 
 const LoginButtonCover = styled.div`
-    flex: 1;
+    width: 25%;
     margin-top: 15px;
+    margin-right: 100px;
     height: 35px;
-    direction: rtl;
-
 `
 const LoginButtondiv = styled.div`
     background-color: ${oc.teal[7]};
     color: white;
     text-align: center;
     margin-right 40%;
-    width: 20%;
     height: 80%;
     border-radius: 24px;
     cursor: pointer;
