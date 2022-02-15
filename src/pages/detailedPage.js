@@ -4,13 +4,12 @@ import Header from '../componment/header/header';
 import Footer from '../componment/footer/footer';
 import ReactTagInput from '@pathofdev/react-tag-input';
 
-import { getFirestore, collection, getDocs, doc, updateDoc} from 'firebase/firestore';
+import { getFirestore, collection, getDocs, doc, updateDoc, query} from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
 import { TextField, Button, makeStyles } from '@material-ui/core'
 import styled from 'styled-components';
 import oc from 'open-color';
-import { unstable_renderSubtreeIntoContainer } from 'react-dom';
 
 const useStyles = makeStyles({
   download: {
@@ -126,6 +125,7 @@ const DetailPage = () => {
   const [teamDesc, setTeamDesc] = useState(contentInfo.project_description);
   const [tags, setTags] = useState(contentInfo.hashTag);
   const [editLinks, setEditLinks] = useState([]);
+  const [professors, setProfessors] = useState([]);
 
   //fetch memebrs, files and links
   useEffect(() => {
@@ -137,6 +137,11 @@ const DetailPage = () => {
         const linksData = await getDocs(collection(db, 'Course Projects', contentInfo.id, "Links"));
         setLinks(linksData.docs.map((doc) => ({...doc.data(), id: doc.id}))); 
         setEditLinks(linksData.docs.map((doc) => ({...doc.data(), id: doc.id})));
+
+        const professorData = await getDocs(query(collection(db, "professors")))
+        professorData.forEach((professorInfo) => {
+          setProfessors(professorList =>[...professorList, professorInfo.data().email])
+        })
       };
     FetchContents();
   }, [contentInfo])
@@ -154,8 +159,8 @@ const DetailPage = () => {
       "teamName" : teamName,
       "project_description": teamDesc,
       "hashTag": tags,
-    }).then(alert("updated!"))
-    navigate("/")
+    }).then(alert("updated!"));
+    navigate("/");
     setEdit(false);
   }
 
@@ -223,7 +228,7 @@ const DetailPage = () => {
                 <TeamName>{contentInfo.teamName}
                 {
                   auth.currentUser 
-                  ? contentInfo.owner === auth.currentUser.email
+                  ? contentInfo.owner === auth.currentUser.email || professors.includes(auth.currentUser.email)
                     ? <Button className={style.editButton} onClick={handleEditOnClick}>Edit</Button>
                     : <div></div>
                   : <div></div>
