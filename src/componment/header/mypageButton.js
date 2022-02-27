@@ -7,7 +7,6 @@ const LoginButtonCover = styled.div`
     width: 15%;
     margin-top: 15px;
     margin-left: 10px;
-    margin-right: 100px;
     height: 35px;
 
 `
@@ -27,7 +26,7 @@ const LoginButtonText = styled.span`
 const MyPageButton = () => {
     return (
         <LoginButtonCover>
-            <Link to="/" style={{ textDecoration: 'none' }}>
+            <Link to="/mypage" style={{ textDecoration: 'none' }}>
                 <LoginButtondiv>
                     <LoginButtonText>MyPage</LoginButtonText>
                 </LoginButtondiv>

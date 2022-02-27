@@ -22,10 +22,10 @@ const LoginButtonText = styled.span`
     font-weight: bolder;
     font-family: 'Rajdhani';
 `
-const ProposalCapstone = () => {
+const ProposalCapstoneButton = () => {
     return (
         <LoginButtonCover>
-            <Link to="/ProposalPage" style={{ textDecoration: 'none' }}>
+            <Link to="/proposalpage" style={{ textDecoration: 'none' }}>
                 <LoginButtondiv>
                     <LoginButtonText>Proposal</LoginButtonText>
                 </LoginButtondiv>
@@ -34,4 +34,4 @@ const ProposalCapstone = () => {
     );
 
 }
-export default ProposalCapstone;
+export default ProposalCapstoneButton;

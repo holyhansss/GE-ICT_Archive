@@ -45,11 +45,13 @@ const useStyles = makeStyles({
     padding: '2px 5px 2px 5px',
   },
   editButton: {
-    color: 'black',
+    color: 'black',    
+    margin: '0px 0px 5px 10px',
     backgroundColor: 'gray',
-    height: '50px',
+    height: '30px',
   },
-  updateButton : {
+  updateButton: {
+    backgroundColor: 'skyblue',
     margin: '10px 0px 40% 0px'
   },
   formElement: {

@@ -1,13 +1,12 @@
-import React from "react";
 import styled from "styled-components";
 import oc from 'open-color';
+import { Link } from "react-router-dom";
 
 
 const LoginButtonCover = styled.div`
     width: 15%;
     margin-top: 15px;
     margin-left: 10px;
-    margin-right: 100px;
     height: 35px;
 
 `
@@ -24,18 +23,17 @@ const LoginButtonText = styled.span`
     font-weight: bolder;
     font-family: 'Rajdhani';
 `
-const LogoutButton = ({handleLogoutClick}) => {
-    const handleClick = () => {
-        handleLogoutClick()
-    }
-    
+
+const ProfessorApprovalPageButton = () => {
     return (
-         <LoginButtonCover>
-            <LoginButtondiv onClick={handleClick}>
-                <LoginButtonText>Sign Out</LoginButtonText>
-            </LoginButtondiv>
-         </LoginButtonCover>
+        <LoginButtonCover>
+            <Link to="/professorApprovalpage" style={{ textDecoration: 'none' }}>
+                <LoginButtondiv>
+                    <LoginButtonText>Approval</LoginButtonText>
+                </LoginButtondiv>
+            </Link>
+        </LoginButtonCover>
     );
 
 }
-export default LogoutButton;
+export default ProfessorApprovalPageButton;

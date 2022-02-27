@@ -4,13 +4,100 @@ import styled from 'styled-components';
 import oc from 'open-color';
 import LoginButton from '../auth/login';
 import LogoutButton from '../auth/logout';
-import ProposalCapstone from './proposalCapstone';
+
+import ProfessorApprovalPageButton from './professorApprovalButton';
+import ProposalCapstoneButton from './proposalCapstoneButton';
 import MyPageButton from './mypageButton';
+
 import firebase from '../../firebase';
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut} from "firebase/auth";
-import { Link } from 'react-router-dom';
+import { getDocs, query, collection, getFirestore } from "firebase/firestore";
+import { Link, useNavigate } from 'react-router-dom';
 import MyPage from '../../pages/myPage';
 import { makeStyles } from "@material-ui/core";
+
+const Header = () => {
+
+    const navigate = useNavigate();
+    const [user, setUser] = useState(null);
+    const [professors, setProfessors] = useState([]);
+    const auth = getAuth();
+    const db = getFirestore();
+    const style = useStyles();
+
+    useEffect(()=> {
+    }, [user]);
+
+    useEffect(()=> {
+        const FetchContents = async () => {
+            const professorData = await getDocs(query(collection(db, "professors")))
+            professorData.forEach((professorInfo) => {
+              setProfessors(professorList =>[...professorList, professorInfo.data().email])
+            })
+          };
+        FetchContents();
+    },[])
+    // useEffect(() => {
+    //     const FetchContents = async () => {
+    //         const professorData = await getDocs(query(collection(db, "professors")))
+    //         professorData.forEach((professorInfo) => {
+    //           setProfessors(professorList =>[...professorList, professorInfo.data().email])
+    //         })
+    //       };
+    //     FetchContents();
+    // }, [])
+    
+
+
+    const handleLoginClick = async () => {
+        let googleProvider = new GoogleAuthProvider;
+        await signInWithPopup(auth, googleProvider)
+        setUser(auth.currentUser)
+        navigate("/");
+    }
+    const handleLogoutClick = async () => {
+        await signOut(auth)
+        setUser(null)
+        window.location.reload();
+    }
+    
+    return (
+      <Positioner>
+            <WhiteBackground>
+              <HeaderContents>
+                  <Logo>GE & ICT</Logo>
+                  <Link to="/" style={{ textDecoration: 'none' }}>
+                    <Slogan>Creation Beyond Technology</Slogan>
+                  </Link>
+                    {auth.currentUser === null
+                    ? <LogoutAndProposal>
+                        <LoginButton handleLoginClick={handleLoginClick} />
+                      </LogoutAndProposal>
+                    : <LogoutAndProposal>
+                        {professors.includes(auth.currentUser.email)
+                        ? <LogoutAndProposal>
+                            <ProfessorApprovalPageButton />
+                            <ProposalCapstoneButton />
+                            <LogoutButton handleLogoutClick={handleLogoutClick} />
+                        </LogoutAndProposal>
+                        : <LogoutAndProposal>
+                            <MyPageButton />
+                            <ProposalCapstoneButton />
+                            <LogoutButton handleLogoutClick={handleLogoutClick} />
+                        </LogoutAndProposal>  
+                        }
+                        
+                      </LogoutAndProposal>
+                    }
+              </HeaderContents>
+            </WhiteBackground>
+          <GradientBorder/>
+      </Positioner>
+  );
+};
+
+export default Header;
+
 
 //router쓰는 법!!
 //https://velog.io/@devstone/react-router-dom-%EC%9D%B4%ED%95%B4%ED%95%98%EA%B3%A0-%ED%99%9C%EC%9A%A9%ED%95%98%EA%B8%B0
@@ -80,50 +167,3 @@ const LogoutAndProposal = styled.div`
     flex: 1;
     justify-content: right;
 `
-
-const Header = () => {
-    const [user, setUser] = useState(null);
-    const auth = getAuth();
-    const style = useStyles();
-
-    useEffect(()=> {
-
-    }, [user]);
-
-    const handleLoginClick = async () => {
-        let googleProvider = new GoogleAuthProvider;
-        await signInWithPopup(auth, googleProvider)
-        setUser(auth.currentUser)
-    }
-    const handleLogoutClick = async () => {
-        await signOut(auth)
-        setUser(null)
-        window.location.reload();
-    }
-    
-    return (
-      <Positioner>
-          <WhiteBackground>
-              <HeaderContents>
-                  <Logo>GE & ICT</Logo>
-                  <Link to="/" style={{ textDecoration: 'none' }}>
-                    <Slogan>Creation Beyond Technology</Slogan>
-                  </Link>
-                    {auth.currentUser === null
-                    ? <LogoutAndProposal>
-                        <LoginButton handleLoginClick={handleLoginClick} />
-                      </LogoutAndProposal>
-                    : <LogoutAndProposal>
-                        <ProposalCapstone />
-                        <LogoutButton handleLogoutClick={handleLogoutClick} />
-                        <MyPageButton />
-                      </LogoutAndProposal>
-                    }
-              </HeaderContents>
-          </WhiteBackground>
-          <GradientBorder/>
-      </Positioner>
-  );
-};
-
-export default Header;

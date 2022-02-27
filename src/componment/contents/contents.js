@@ -122,10 +122,10 @@ const Contents = () => {
 
     const getFirestContents = async () => {
         setCourse(selectedCourse)
-        console.log(content.length)
+        //console.log(content.length)
         if(content.length === 0){
             setContent([])
-            console.log('get first contents')
+            // console.log('get first contents')
             let q = await query(collection(db, 'Course Projects'), where('course', '==', selectedCourse) ,limit(9), orderBy('createdAt', 'desc'))
             getDocs(q).then((snapshot) => {
                 setContent((contents) => {
@@ -193,7 +193,9 @@ const Contents = () => {
             {
                 state: {
                     searchKeyword: searchKeyword
-            }});
+                }
+            }
+        );
     }
 
     useEffect(() => {
@@ -202,7 +204,7 @@ const Contents = () => {
         
     },[])
     useEffect(() => {
-        console.log(content)
+        // console.log(content)
     },[content])
 
 

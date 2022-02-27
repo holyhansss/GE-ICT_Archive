@@ -364,6 +364,7 @@ function ProposalForm() {
   {
       return Math.floor(new Date().getTime() / 1000);
   }
+
   useEffect(() => {
     if(selectedFiles.length === 0){
       COURSE_REPORTS.map((report, index)=> {
@@ -414,7 +415,6 @@ function ProposalForm() {
           required
           error={teamNameError}
           className={style.formElement}
-
         />  
         <FormControl
           fullWidth
