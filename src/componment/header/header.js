@@ -81,7 +81,7 @@ const Header = () => {
                             <LogoutButton handleLogoutClick={handleLogoutClick} />
                         </LogoutAndProposal>
                         : <LogoutAndProposal>
-                            <MyPageButton />
+                            {/* <MyPageButton /> */}
                             <ProposalCapstoneButton />
                             <LogoutButton handleLogoutClick={handleLogoutClick} />
                         </LogoutAndProposal>  

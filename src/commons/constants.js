@@ -7,7 +7,7 @@ export const ICT_COURSES = [
     '캡스톤 디자인',
     'IDEA CENTER',
 ]
-
+export const COLLECTION_NAME = 'CourseProject'
 export const SEMESTERS  = [
     '2022-1',
     '2021-2',

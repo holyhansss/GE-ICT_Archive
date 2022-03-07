@@ -113,11 +113,7 @@ const Contents = () => {
     const [searchKeyword, setSearchKeyword] = useState('');
     const navigate = useNavigate();
 
-    // const FetchContents = async () => {
-    //     //const data = await getDocs(collection(db, course), where("semester", "==", semester));
-    //     const data = await getDocs(collection(db, course));
-    //     setContent(data.docs.map((doc) => ({...doc.data(), id: doc.id})));        
-    // };
+
 
 
     const getFirestContents = async () => {
@@ -126,7 +122,7 @@ const Contents = () => {
         if(content.length === 0){
             setContent([])
             // console.log('get first contents')
-            let q = await query(collection(db, 'Course Projects'), where('course', '==', selectedCourse) ,limit(9), orderBy('createdAt', 'desc'))
+            let q = await query(collection(db, 'CourseProjects'), where('course', '==', selectedCourse), where('approved', '==', true), limit(9), orderBy('createdAt', 'desc'))
             getDocs(q).then((snapshot) => {
                 setContent((contents) => {
                 const arr = [...contents]
@@ -152,16 +148,14 @@ const Contents = () => {
         if (lastVisible === -1) {
             return
         } else if (lastVisible) {
-            q = query(collection(db, 'Course Projects'), where('course', '==', selectedCourse), limit(6), orderBy('createdAt', 'desc'), startAfter(lastVisible))
+            q = query(collection(db, 'CourseProjects'), where('course', '==', selectedCourse), where('approved', '==', true), limit(6), orderBy('createdAt', 'desc'), startAfter(lastVisible))
         } 
         
         if(lastVisible !== -1 && q !== undefined){
             getDocs(q).then((snapshot) => {
                 setContent((contents) => {
                   const arr = [...contents]
-                //   if(!content.includes(doc)){
 
-                //   }
                   snapshot.forEach((doc) => {
                     arr.push({...doc.data(), id: doc.id})
                   })

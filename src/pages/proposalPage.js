@@ -8,7 +8,7 @@ import AlertTitle from '@material-ui/lab/AlertTitle';
 
 function ProposalPage() {
   const auth = getAuth();
-  if(auth.currentUser === null || !auth.currentUser.email.includes("@handong.edu")){
+  if(auth.currentUser === null || !auth.currentUser.email.includes("@handong.ac.kr")){
     return (
       <Alert severity="error">
         <AlertTitle>한동 로그인</AlertTitle>

@@ -8,7 +8,7 @@ function professorApprovalPage() {
   return (
     <div>
         <Header></Header>
-        <ApprovalPageContent/>
+        <ApprovalPageContent></ApprovalPageContent>
         <Footer></Footer>
     </div>
 

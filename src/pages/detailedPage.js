@@ -132,11 +132,11 @@ const DetailPage = () => {
   //fetch memebrs, files and links
   useEffect(() => {
     const FetchContents = async () => {
-        const memberData = await getDocs(collection(db, 'Course Projects', contentInfo.id, "members"));
+        const memberData = await getDocs(collection(db, 'CourseProjects', contentInfo.id, "members"));
         setMembers(memberData.docs.map((doc) => ({...doc.data(), id: doc.id})));        
-        const fileData = await getDocs(collection(db, 'Course Projects', contentInfo.id, "fileURLs"));
+        const fileData = await getDocs(collection(db, 'CourseProjects', contentInfo.id, "fileURLs"));
         setFiles(fileData.docs.map((doc) => ({...doc.data(), id: doc.id}))); 
-        const linksData = await getDocs(collection(db, 'Course Projects', contentInfo.id, "Links"));
+        const linksData = await getDocs(collection(db, 'CourseProjects', contentInfo.id, "Links"));
         setLinks(linksData.docs.map((doc) => ({...doc.data(), id: doc.id}))); 
         setEditLinks(linksData.docs.map((doc) => ({...doc.data(), id: doc.id})));
 
@@ -157,7 +157,7 @@ const DetailPage = () => {
   };
 
   const handleUpdateOnClick = async () => {
-    await updateDoc(doc(db, "Course Projects", contentInfo.id),{
+    await updateDoc(doc(db, "CourseProjects", contentInfo.id),{
       "teamName" : teamName,
       "project_description": teamDesc,
       "hashTag": tags,
@@ -256,7 +256,7 @@ const DetailPage = () => {
                 </div>
                 <ProjectDesc>Abstract : {contentInfo.project_description}</ProjectDesc>
                 {
-                    auth.currentUser === null || !auth.currentUser.email.includes("@handong.edu")
+                    auth.currentUser === null || !auth.currentUser.email.includes("@handong.ac.kr")
                     ? (
                       <div className={style.loginWarning}>
                         <div>관련 자료 및 링크를 보기 위해서는 한동대학교 공식 이메일로 로그인 해주세요</div>
@@ -275,7 +275,7 @@ const DetailPage = () => {
                       )    
                 }
                 {
-                    auth.currentUser === null || !auth.currentUser.email.includes("@handong.edu")
+                    auth.currentUser === null || !auth.currentUser.email.includes("@handong.ac.kr")
                     ? <div></div>
                     : (
                       files == null 
