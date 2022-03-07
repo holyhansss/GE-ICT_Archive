@@ -200,17 +200,20 @@ function ProposalForm() {
         createdAt: currentTime,
       })
       // member 저장
-      const memberCollectionRef = collection(docRef, 'members')
-      teamMembers.map((memberInfo, index)=> {
-        if(memberInfo.name !== '' && memberInfo.email !== ''){
-          addDoc(memberCollectionRef, {
-            name: memberInfo.name,
-            email: memberInfo.email,
-            classOf: memberInfo.classOf,
-            major: memberInfo.major,
-          })
-        }
-      })
+      if(course !== 'IDEA CENTER'){
+        const memberCollectionRef = collection(docRef, 'members')
+        teamMembers.map((memberInfo, index)=> {
+          if(memberInfo.name !== '' && memberInfo.email !== ''){
+            addDoc(memberCollectionRef, {
+              name: memberInfo.name,
+              email: memberInfo.email,
+              classOf: memberInfo.classOf,
+              major: memberInfo.major,
+            })
+          }
+        })
+      }
+      
       //FILES URL 링크들 저장
       const fileCollectionRef = collection(docRef, 'fileURLs')
       fileURLssss.map((fileURL, index) => 
@@ -471,100 +474,108 @@ function ProposalForm() {
           </Select>
         </FormControl>
         <CreateInputMember>
-        {countMember.map((item, index)=> {
-          return (
-            <div key={item}>
-            <TextField
-              key={"name" + index}
-              name='name'
-              onChange={(e) => {
-                handleMemberNameChange(index, e.target.value)
-                if(e.target.value !== ''){
-                  setTeamMemberNameError(false)
-                }
-              }}
-              label='Name'
-              variant='outlined'
-              color='primary'
-              fullWidth
-              required
-              error={teamMemberNameError}
-              className={style.teamMember}
-            />
-            <TextField
-                key={"email" + index}
+          {course !== 'IDEA CENTER'
+          ? countMember.map((item, index)=> {
+            return (
+              <div key={item}>
+              <TextField
+                key={"name" + index}
+                name='name'
                 onChange={(e) => {
-                  handleMemberEmailChange(index, e.target.value)
+                  handleMemberNameChange(index, e.target.value)
                   if(e.target.value !== ''){
-                    setTeamMemberEmailError(false)
+                    setTeamMemberNameError(false)
                   }
                 }}
-                label='Email'
+                label='Name'
                 variant='outlined'
                 color='primary'
                 fullWidth
                 required
-               error={teamMemberEmailError}
-              className={style.teamMemberEmail}
-            />
-            <TextField
-                key={"classOF" + index}
-                onChange={(e) => {
-                  handleMemberClassOfChange(index, e.target.value)
-                  if(e.target.value !== ''){
-                    setTeamMemberClassOfError(false)
-                  }
-                }}
-                label='학번 ex) 19, 20'
-                variant='outlined'
-                color='primary'
-                fullWidth
-                required
-               error={teamMemberClassOfError}
-              className={style.teamMember}
-            />
-            <TextField
-                key={"major" + index}
-                onChange={(e) => {
-                  handleMemberMajorChange(index, e.target.value)
-                  if(e.target.value !== ''){
-                    setTeamMemberMajorError(false)
-                  }
-                }}
-                label='전공 ex. GE 전산'
-                variant='outlined'
-                color='primary'
-                fullWidth
-                required
-               error={teamMemberMajorError}
-              className={style.teamMember}
-            />
-            </div>
-
-          );
-        })}
-
-
-        <Button 
-          variant='outlined' 
-          onClick={() => {
-              addInputMember()
-            }
+                error={teamMemberNameError}
+                className={style.teamMember}
+              />
+              <TextField
+                  key={"email" + index}
+                  onChange={(e) => {
+                    handleMemberEmailChange(index, e.target.value)
+                    if(e.target.value !== ''){
+                      setTeamMemberEmailError(false)
+                    }
+                  }}
+                  label='Email'
+                  variant='outlined'
+                  color='primary'
+                  fullWidth
+                  required
+                 error={teamMemberEmailError}
+                className={style.teamMemberEmail}
+              />
+              <TextField
+                  key={"classOF" + index}
+                  onChange={(e) => {
+                    handleMemberClassOfChange(index, e.target.value)
+                    if(e.target.value !== ''){
+                      setTeamMemberClassOfError(false)
+                    }
+                  }}
+                  label='학번 ex) 19, 20'
+                  variant='outlined'
+                  color='primary'
+                  fullWidth
+                  required
+                 error={teamMemberClassOfError}
+                className={style.teamMember}
+              />
+              <TextField
+                  key={"major" + index}
+                  onChange={(e) => {
+                    handleMemberMajorChange(index, e.target.value)
+                    if(e.target.value !== ''){
+                      setTeamMemberMajorError(false)
+                    }
+                  }}
+                  label='전공 ex. GE 전산'
+                  variant='outlined'
+                  color='primary'
+                  fullWidth
+                  required
+                 error={teamMemberMajorError}
+                className={style.teamMember}
+              />
+              </div>
+  
+            );
+          })
+          : <div></div>
           }
+        
+
+        {course !== 'IDEA CENTER'
+        ?<div>
+          <Button 
+            variant='outlined' 
+            onClick={() => {
+                addInputMember()
+              }
+            }
+            className={style.memberPlueMinus}
+          >
+            +
+          </Button>
+          <Button 
+            variant='outlined' 
+            onClick={() => {
+                subInputMember()
+              }
+            }
           className={style.memberPlueMinus}
-        >
-          +
-        </Button>
-        <Button 
-          variant='outlined' 
-          onClick={() => {
-              subInputMember()
-            }
-          }
-        className={style.memberPlueMinus}
-        >
-          -
-        </Button>
+          >
+            -
+          </Button>
+          </div>
+        :<div></div>
+        }
         </CreateInputMember>
 
         <TextField
