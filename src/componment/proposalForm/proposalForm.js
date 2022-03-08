@@ -16,11 +16,11 @@ const useStyles = makeStyles({
   formElement: {
     margin: '10px 0px 10px 0px'
   },
-  teamMemberEmail: {
+  teamMember: {
     margin: '10px 5px 10px 0px',
     width: "30%"
   },
-  teamMember: {
+  linkName: {
     margin: '10px 5px 10px 0px',
     width: "22%"
   },
@@ -140,14 +140,8 @@ function ProposalForm() {
     if(teamMembers[0].name === '') {
       setTeamMemberNameError(true)
     }
-    if(teamMembers[0].email === ''){
-      setTeamMemberEmailError(true)
-    }
     if(teamMembers[0].classOf === ''){
       setTeamMemberClassOfError(true)
-    }
-    if(teamMembers[0].major === ''){
-      setTeamMemberMajorError(true)
     }
     if(course === ''){
       setCourseError(true)
@@ -319,27 +313,13 @@ function ProposalForm() {
       )
     )
   }
-  const handleMemberEmailChange = (targetId, _email) => {
-    setTeamMembers(
-      teamMembers.map((member) =>
-        member.id === targetId ? { ...member, email: _email } : member
-      )
-    )
-  }
   const handleMemberClassOfChange = (targetId, _classOf) => {
     setTeamMembers(
       teamMembers.map((member) =>
         member.id === targetId ? { ...member, classOf: _classOf } : member
       )
     )
-  }
-  const handleMemberMajorChange = (targetId, _major) => {
-    setTeamMembers(
-      teamMembers.map((member) =>
-        member.id === targetId ? { ...member, major: _major } : member
-      )
-    )
-  }
+  }  
   const handleLinkNameChange = (targetId, _linkName) => {
     setLinks(
       links.map((link) =>
@@ -411,7 +391,7 @@ function ProposalForm() {
               setTeamNameError(false)
             }
           }}
-          label='Team Name'
+          label='Title'
           variant='outlined'
           color='primary'
           fullWidth
@@ -495,7 +475,7 @@ function ProposalForm() {
                 error={teamMemberNameError}
                 className={style.teamMember}
               />
-              <TextField
+              {/* <TextField
                   key={"email" + index}
                   onChange={(e) => {
                     handleMemberEmailChange(index, e.target.value)
@@ -510,7 +490,7 @@ function ProposalForm() {
                   required
                  error={teamMemberEmailError}
                 className={style.teamMemberEmail}
-              />
+              /> */}
               <TextField
                   key={"classOF" + index}
                   onChange={(e) => {
@@ -527,7 +507,7 @@ function ProposalForm() {
                  error={teamMemberClassOfError}
                 className={style.teamMember}
               />
-              <TextField
+              {/* <TextField
                   key={"major" + index}
                   onChange={(e) => {
                     handleMemberMajorChange(index, e.target.value)
@@ -542,7 +522,7 @@ function ProposalForm() {
                   required
                  error={teamMemberMajorError}
                 className={style.teamMember}
-              />
+              /> */}
               </div>
   
             );
@@ -624,7 +604,7 @@ function ProposalForm() {
                 variant='outlined'
                 color='primary'
                 fullWidth
-                className={style.teamMember}
+                className={style.linkName}
               />
               <TextField
                   key={"LinkURL" + index}
@@ -684,7 +664,7 @@ function ProposalForm() {
               component='span'
               className={style.inputImageButton}
             >
-              Upload Image
+              Upload Main Image*
             </Button>
           </label>
           {imageUrl && selectedImage && (
