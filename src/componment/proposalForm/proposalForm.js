@@ -12,56 +12,7 @@ import styled from 'styled-components';
 
 import { ICT_COURSES, SEMESTERS, COURSE_REPORTS} from '../../commons/constants';
 
-const useStyles = makeStyles({
-  formElement: {
-    margin: '10px 0px 10px 0px'
-  },
-  teamMember: {
-    margin: '10px 5px 10px 0px',
-    width: "30%"
-  },
-  linkName: {
-    margin: '10px 5px 10px 0px',
-    width: "22%"
-  },
-  linkURL: {
-    margin: '10px 5px 10px 0px',
-    width: "70%"
-  },
-  filesTypography: {
-    margin: '0px 30px 0px 0px'
-  },
-  inputImageButton: {
-    margin: '20px 0px 0px 0px' 
-  },
-  memberPlueMinus: {
-    margin: '0px 2px 2px 2px' 
-  }
-});
 
-const FormWrapper = styled.div`
-  display: flex;
-  margin-top: 100px;    
-  justify-content: center;
-  flex-wrap: wrap;
-  width: 100%;
-`
-const StyledForm = styled.form`
-  width: 750px;
-  text-align: center;
-`
-
-const CreateInputMember = styled.div`
-  width: 750px;
-  text-align: center;
-`
-
-const FilesWrapper = styled.div`
-  display: flex;
-  margin-top: 20px;
-  align-items: center;
-  justify-content: center;
-`
 
 
 function ProposalForm() {
@@ -71,6 +22,7 @@ function ProposalForm() {
   const [teamName, setTeamName] = useState('');
   const [countMember, setCountMember] = useState([0]);
   const [countLinks, setCountLinks] = useState([0]);
+  const [countFiles, setCountFiles] = useState([0]);
 
   const [teamMembers, setTeamMembers] = useState([
     {
@@ -88,6 +40,13 @@ function ProposalForm() {
       URL: '',
     },
   ]);
+  const [selectedFiles, setSelectedFiles] = useState([
+    {
+      id: 0,
+      fileName: '',
+      file: '',
+    },
+  ]);
 
   const [teamDesc, setTeamDesc] = useState('');
   const [course, setCourse] = useState('');
@@ -98,31 +57,12 @@ function ProposalForm() {
   const [fileURLs, setFileURLs] = useState([
     {}
   ]);
-  const [selectedFiles, setSelectedFiles] = useState([
-    // {
-    //   id: 0,
-    //   fileName: '최종보고서',
-    //   file: '',
-    // },
-    // {
-    //   id: 1,
-    //   fileName: '기말발표',
-    //   file: '',
-    // },
-    // {
-    //   id: 2,
-    //   fileName: 'MVP',
-    //   file: '',
-    // }
 
-  ]);
 
   const [teamNameError, setTeamNameError] = useState(false);
   const [teamDescError, setTeamDescError] = useState(false);
   const [teamMemberNameError, setTeamMemberNameError] = useState(false);
-  const [teamMemberEmailError, setTeamMemberEmailError] = useState(false);
   const [teamMemberClassOfError, setTeamMemberClassOfError] = useState(false);
-  const [teamMemberMajorError, setTeamMemberMajorError] = useState(false);
 
   const [courseError, setCourseError] = useState(false);
   const [selectedSemesterError, setSelectedSemesterError] = useState(false);
@@ -231,6 +171,7 @@ function ProposalForm() {
 
   }
 
+  // control members
   const addInputMember = () => {
     let countArr = [...countMember]
     let counter = countArr.slice(-1)[0]
@@ -241,7 +182,6 @@ function ProposalForm() {
     addTeamMembersArray()
   }
 
-  
   const addTeamMembersArray = () => {
     const newMember = {
       id: teamMembers.length,
@@ -252,7 +192,24 @@ function ProposalForm() {
     }
     setTeamMembers(teamMembers.concat(newMember))
   }
-  
+
+  const subInputMember = () => {
+    let countArr = [...countMember]
+    countArr.pop()
+    if(teamMembers.length <= 1){
+
+    }else {
+      setCountMember(countArr)
+      subTeamMembersArray() 
+    }
+  }
+  const subTeamMembersArray = () => {
+    let teamMemberArr = [...teamMembers]
+    teamMemberArr.pop()
+    setTeamMembers(teamMemberArr)
+  }
+
+  // control links
   const addInputLinks = () => {
     let countArr = [...countLinks]
     let counter = countArr.slice(-1)[0]
@@ -273,22 +230,6 @@ function ProposalForm() {
     console.log(links)
   }
 
-  const subInputMember = () => {
-    let countArr = [...countMember]
-    countArr.pop()
-    if(teamMembers.length <= 1){
-
-    }else {
-      setCountMember(countArr)
-      subTeamMembersArray() 
-    }
-  }
-  const subTeamMembersArray = () => {
-    let teamMemberArr = [...teamMembers]
-    teamMemberArr.pop()
-    setTeamMembers(teamMemberArr)
-  }
-
   const subInputLinks = () => {
     let countArr = [...countLinks]
     countArr.pop()
@@ -305,7 +246,46 @@ function ProposalForm() {
     setLinks(linksArr)
   }
 
+  // control files
+  const addInputFiles = () => {
+    let countArr = [...countFiles];
+    let counter = countArr.slice(-1)[0];
+  
+    counter += 1;
+    countArr.push(counter);
+    setCountFiles(countArr);
+    addFilesArray();
+  }
 
+  const addFilesArray = () => {
+    const newLFile = {
+      id: selectedFiles.length,
+      fileName: '',
+      file: '',
+    }
+    setSelectedFiles(selectedFiles.concat(newLFile))
+    console.log(selectedFiles)
+  }
+
+  const subInputFiles = () => {
+    let countArr = [...countFiles]
+    countArr.pop()
+    if(selectedFiles.length <= 1){
+
+    }else {
+      setCountFiles(countArr)
+      subFilesArray() 
+    }
+  }
+  const subFilesArray = () => {
+    let FilesArr = [...selectedFiles]
+    FilesArr.pop()
+    setSelectedFiles(FilesArr)
+  }
+
+
+
+  // handling changes
   const handleMemberNameChange = (targetId, _name) => {
     setTeamMembers(
       teamMembers.map((member) =>
@@ -334,7 +314,13 @@ function ProposalForm() {
       )
     )
   }
-
+  const handleFileNameChange = (targetId, _fileName) => {
+    setSelectedFiles(
+      selectedFiles.map((file) =>
+        file.id === targetId ? { ...file, fileName: _fileName } : file
+      )
+    )
+  }
   const handleFileChange = (targetId, _file) => {
     setSelectedFiles(
       selectedFiles.map((selectedFile) => 
@@ -348,18 +334,18 @@ function ProposalForm() {
       return Math.floor(new Date().getTime() / 1000);
   }
 
-  useEffect(() => {
-    if(selectedFiles.length === 0){
-      COURSE_REPORTS.map((report, index)=> {
-        let reportObj = {
-            id: index,
-            fileName: report,
-            file: '',
-          }
-        setSelectedFiles((reports) => [...reports, reportObj]);
-      })
-    }
-  },[])
+  // useEffect(() => {
+  //   if(selectedFiles.length === 0){
+  //     COURSE_REPORTS.map((report, index)=> {
+  //       let reportObj = {
+  //           id: index,
+  //           fileName: report,
+  //           file: '',
+  //         }
+  //       setSelectedFiles((reports) => [...reports, reportObj]);
+  //     })
+  //   }
+  // },[])
   
   useEffect(() => {
     console.log(selectedFiles)
@@ -676,7 +662,7 @@ function ProposalForm() {
         </>
         <br></br>
         
-        {COURSE_REPORTS.map((report, index)=> {
+        {/* {COURSE_REPORTS.map((report, index)=> {
           return (
             <FilesWrapper key={index}>
               <Box sx={{
@@ -699,7 +685,69 @@ function ProposalForm() {
               </Button>
             </FilesWrapper>
           );
-        })}
+        })} */}
+
+        <CreateInputMember>
+          {countFiles.map((item, index)=> {
+            return (
+              <div key={index} className={style.fileWrapper}> 
+                <TextField
+                  key={"FileName" + index}
+                  name='File Name'
+                  onChange={(e) => {
+                    //handleLinkNameChange(index, e.target.value)
+                    handleFileNameChange(index, e.target.value)
+                  }}
+                  label='File Name'
+                  variant='outlined'
+                  color='primary'
+                  fullWidth
+                  className={style.fileName}
+                />
+                <div
+                  className={style.fileButton}  
+                >
+                  <Button 
+                    variant='contained'
+                    component='label'
+                    >
+                    <Input
+                      type='file'
+                      hidden
+                      onChange={(e)=> {
+                        handleFileChange(index, e.target.files[0])
+                      }}
+                      
+                    />
+                  </Button>
+                </div>
+              </div>
+
+            );
+          })}
+
+          <Button 
+            variant='outlined' 
+            onClick={() => {
+                addInputFiles()
+              }
+            }
+            className={style.memberPlueMinus}
+          >
+            +
+          </Button>
+          <Button 
+            variant='outlined' 
+            onClick={() => {
+                subInputFiles()
+              }
+            }
+          className={style.memberPlueMinus}
+          >
+            -
+          </Button>
+        </CreateInputMember>
+
        
         <br></br>
         
@@ -720,3 +768,58 @@ function ProposalForm() {
 }
 
 export default ProposalForm;
+
+const useStyles = makeStyles({
+  formElement: {
+    margin: '10px 0px 10px 0px'
+  },
+  teamMember: {
+    margin: '10px 5px 10px 0px',
+    width: "30%"
+  },
+  linkName: {
+    margin: '10px 5px 10px 0px',
+    width: "22%"
+  },
+  linkURL: {
+    margin: '10px 5px 10px 0px',
+    width: "70%"
+  },
+  fileWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: '20px 0px 10px 0px' 
+
+  },
+  fileName: {
+    width:"22%",
+    margin: '0px 10px 0px 0px',
+  },
+  fileButton: {
+    
+  },
+  inputImageButton: {
+    margin: '20px 0px 0px 0px' 
+  },
+  memberPlueMinus: {
+    margin: '0px 2px 2px 2px' 
+  }
+});
+
+const FormWrapper = styled.div`
+  display: flex;
+  margin-top: 100px;    
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
+`
+const StyledForm = styled.form`
+  width: 750px;
+  text-align: center;
+`
+
+const CreateInputMember = styled.div`
+  width: 750px;
+  text-align: center;
+`
