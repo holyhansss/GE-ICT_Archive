@@ -58,6 +58,7 @@ const Header = () => {
     const handleLogoutClick = async () => {
         await signOut(auth)
         setUser(null)
+        navigate("/");
         window.location.reload();
     }
     
