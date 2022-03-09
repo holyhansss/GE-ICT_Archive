@@ -96,20 +96,21 @@ function ProposalForm() {
       const storage = getStorage();
       const auth = getAuth();
       const fileURLssss = [];
-      const date = new Date()
+      const date = new Date();
       //const currentTime = date.getFullYear() + '' + (date.getMonth()+1) + '' +date.getDate() + '' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
-      const currentTime = Unix_timestampConv()
-      console.log(currentTime);
-
+      const currentTime = Unix_timestampConv();
+      //console.log(currentTime);
+      
       // upload main image
       let imageStorageRef = ref(storage, `images/${selectedImage.name}${currentTime}`)
       await uploadBytes(imageStorageRef, selectedImage)
-      const imageURL = await getDownloadURL(imageStorageRef)
+      const imageStorageURL = await getDownloadURL(imageStorageRef)
+      //console.log(imageStorageURL);
       //upload files
       for(let i=0; i<selectedFiles.length;i++ ){
         if(selectedFiles[i].file !== '' && selectedFiles[i].file !== undefined){
+          //console.log(selectedFiles[i])
           let filename = selectedFiles[i].fileName;
-          console.log(selectedFiles[i].fileName)
           let storageRef = ref(storage, `${selectedFiles[i].fileName}${currentTime}`);
           await uploadBytes(storageRef, selectedFiles[i].file)
           let URL = await getDownloadURL(storageRef)
@@ -121,12 +122,11 @@ function ProposalForm() {
         }
       }
       
-
-      const docRef = await addDoc(collection(db, 'Course Projects'), {
+      const docRef = await addDoc(collection(db, 'CourseProjects'), {
         teamName: teamName,
         project_description: teamDesc,
         semester: selectedSemester,
-        image_url: imageURL,
+        image_url: imageStorageURL,
         hashTag: tags,
         course: course,
         approved: false,
@@ -227,7 +227,7 @@ function ProposalForm() {
       URL: '',
     }
     setLinks(links.concat(newLink))
-    console.log(links)
+    //console.log(links)
   }
 
   const subInputLinks = () => {
@@ -264,7 +264,7 @@ function ProposalForm() {
       file: '',
     }
     setSelectedFiles(selectedFiles.concat(newLFile))
-    console.log(selectedFiles)
+    //console.log(selectedFiles)
   }
 
   const subInputFiles = () => {
@@ -348,7 +348,7 @@ function ProposalForm() {
   // },[])
   
   useEffect(() => {
-    console.log(selectedFiles)
+    //console.log(selectedFiles)
   },[selectedFiles])
 
   useEffect(() => {
@@ -358,6 +358,7 @@ function ProposalForm() {
     if (selectedImage) {
       setImageUrl(URL.createObjectURL(selectedImage));
     }
+    //console.log(imageUrl)
   }, [selectedImage]);
 
 
