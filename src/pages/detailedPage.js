@@ -78,7 +78,7 @@ const Content = styled.div`
 `
 const MainImage = styled.img`
   flex: 3;
-  max-height: 400px;
+  max-height: 800px;
   max-width: 100%;
   object-fit: contain;
 `
@@ -239,7 +239,7 @@ const DetailPage = () => {
                 <SchoolOf>{course} / {contentInfo.semester}</SchoolOf>
                 <TeamMembers>
                   {
-                    members == null 
+                    members === null 
                     ? <div></div>
                     : members.map((member, index) => 
                         <TeamMemberInfo key={index} >{member.name} / {member.major}({member.classOf})</TeamMemberInfo>
@@ -249,7 +249,7 @@ const DetailPage = () => {
                 <div>{
                         contentInfo.hashTag !== undefined ?
                         contentInfo.hashTag.map((tag, index)=> 
-                        <div className={style.tags} key={index}>{tag}</div>
+                          <div className={style.tags} key={index}>{tag}</div>
                         )
                         : <div></div>
                         }

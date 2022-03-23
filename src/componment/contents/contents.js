@@ -2,6 +2,7 @@ import  { React, useState, useEffect } from 'react';
 
 import { firebase } from "../../firebase";
 import { getFirestore, collection, getDocs, where, query, limit, startAfter, startAt, orderBy, doc } from "firebase/firestore";
+import { getAuth } from 'firebase/auth';
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useBottomScrollListener } from 'react-bottom-scroll-listener';
@@ -105,6 +106,7 @@ const Contents = () => {
     const style = useStyles();
 
     const db = getFirestore();
+    const auth = getAuth();
     const [loading, setLoading] = useState(true);
     const [content, setContent] = useState([]);
     const [course, setCourse] = useState('제품 기획 및 개발')
@@ -195,7 +197,9 @@ const Contents = () => {
     useEffect(() => {
         getFirestContents();
         setLoading(false)
-        
+        // if(auth.currentUser !== null){
+            
+        // }
     },[])
     useEffect(() => {
         // console.log(content)
@@ -270,7 +274,16 @@ const Contents = () => {
                         fullWidth
                         //className={style.select_course}
                         onChange={(e) => {
-                            setSelectedCourse(e.target.value)
+                            if(e.target.value !== "IDEA CENTER"){
+                                setSelectedCourse(e.target.value)
+                            }
+                            else{
+                                if(auth.currentUser !== null && auth.currentUser.email.includes("@handong.ac.kr")){
+                                    setSelectedCourse(e.target.value)
+                                } else{
+                                    alert("Must be Login with Handong Official Email!")
+                                }
+                            } 
                         }}
                         variant='standard'
                     >

@@ -59,7 +59,8 @@ const Header = () => {
         await signOut(auth)
         setUser(null)
         navigate("/");
-        window.location.reload();
+
+        //window.location.reload();
     }
     
     return (

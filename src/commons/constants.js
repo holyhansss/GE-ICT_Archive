@@ -16,6 +16,7 @@ export const SEMESTERS  = [
     '2020-1',
     '2019-2',
     '2019-1',
+    '-',
 ]
 
 export const COURSE_REPORTS = [
