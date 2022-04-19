@@ -11,7 +11,6 @@ import {Card, Row, Col, Form, Button} from 'react-bootstrap';
 import {ICT_COURSES} from '../../commons/constants';
 
 const Contents = () => {
-    //const style = useStyles();
 
     const db = getFirestore();
     const auth = getAuth();
@@ -151,7 +150,7 @@ const Contents = () => {
                 
                 <Form className='col' style={{marginRight: "100px"}}>
                     <Button className='float-end ' onClick={getNewCourseContents} style={{
-                        
+
                         }}>
                         이동
                     </Button>
@@ -171,6 +170,7 @@ const Contents = () => {
                         style={{
                             display: "inline",
                             width: "250px",
+                            marginRight: "5px",
                         }}>
                         {
                             ICT_COURSES.map((course, index) => {

@@ -1,4 +1,3 @@
-import './header.css'
 import {useEffect, useState} from 'react';
 
 import firebase from '../../firebase';
@@ -45,7 +44,7 @@ const Header = () => {
         navigate("/");
     }
     const handleProposalClick = () => {
-        if(auth.currentUser !== null && auth.currentUser.email.includes("@handong.ac.kr")){
+        if (auth.currentUser !== null && auth.currentUser.email.includes("@handong.ac.kr")) {
             navigate("/proposalpage");
         } else {
             alert('please login with handong offical email');
@@ -71,14 +70,14 @@ const Header = () => {
                             }}>Creation Beyond Technology</div>
                     </Nav>
                     {
-                        
+
                         auth.currentUser === null
                             ? <Nav>
                                     <Nav.Link onClick={handleLoginClick}>Login</Nav.Link>
                                 </Nav>
                             : professors.includes(auth.currentUser.email)
                                 ? <Nav>
-                                        <Nav.Link href="/professorApprovalpage">Aproval</Nav.Link>
+                                        <Nav.Link href="/professorApprovalpage">Approval</Nav.Link>
                                         <Nav.Link onClick={handleProposalClick}>Proposal</Nav.Link>
                                         <Nav.Link onClick={handleLogoutClick}>Logout</Nav.Link>
                                     </Nav>

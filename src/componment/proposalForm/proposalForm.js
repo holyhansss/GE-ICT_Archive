@@ -53,7 +53,8 @@ function ProposalForm() {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-
+        console.log(teamMembers);
+        
         if (teamName && teamDesc && course && selectedSemester && selectedImage) {
             //console.log(teamName, teamDesc, selectedSemester, teamMembers, course)
             const db = getFirestore();
@@ -98,14 +99,15 @@ function ProposalForm() {
             })
             // member 저장
             if (course !== 'IDEA CENTER') {
+                console.log("this work but ?")
                 const memberCollectionRef = collection(docRef, 'members')
                 teamMembers.map((memberInfo, index) => {
-                    if (memberInfo.name !== '' && memberInfo.email !== '') {
+                    if (memberInfo.name !== '' && memberInfo.classOf !== '') {
                         addDoc(memberCollectionRef, {
                             name: memberInfo.name,
-                            email: memberInfo.email,
+                            // email: memberInfo.email,
                             classOf: memberInfo.classOf,
-                            major: memberInfo.major
+                            // major: memberInfo.major
                         })
                     }
                 })
@@ -126,9 +128,9 @@ function ProposalForm() {
                 })
             })
 
-            window
-                .location
-                .reload();
+            // window
+            //     .location
+            //     .reload();
 
         }
 

@@ -1,7 +1,7 @@
 import {React} from 'react';
 import Header from '../componment/header/header';
 import Footer from '../componment/footer/footer';
-import ApprovalPageContent from '../componment/approvalPageContents/approvalPageContent';
+import ApprovalPageContent from '../componment/contents/approvalPageContent';
 
 function professorApprovalPage() {
   
