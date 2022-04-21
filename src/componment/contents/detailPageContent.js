@@ -23,7 +23,8 @@ import {
     Image,
     Tab,
     Tabs,
-    Button
+    Button,
+    Row,
 } from 'react-bootstrap';
 
 const DetailPage = () => {
@@ -264,11 +265,11 @@ const ProjectDetail = props => {
                                         : <Tab eventKey="files" title="files">
                                             {
                                                 files.map(
-                                                    (file, index) => <Button key={index} className="{style.download}">
+                                                    (file, index) => <Row md='auto' className='my-2' style={{ width: '50%'}}><Button key={index} className="" variant='secondary'>
                                                         <img src="https://img.icons8.com/material-sharp/18/000000/download--v1.png"/>
-                                                        <a href={file.URL} target="_blank" className="{style.downloadAnchor}">{file.name}
+                                                        <a href={file.URL} target="_blank" className="mx-1" style={{ color: 'black'}}>{file.name}
                                                             Download</a>
-                                                    </Button>
+                                                    </Button></Row>
                                                 )
                                             }</Tab>
                                     )
@@ -287,8 +288,8 @@ const ProjectDetail = props => {
                                                     if (link.name === '' && link.URL === '') 
                                                         return <div key={index}></div>
                                                     else 
-                                                        return <div key={index} className="{style.linksContainer}">
-                                                            <a href={link.URL} target='_blank' className="{style.URL}">{link.name}: {link.URL}</a>
+                                                        return <div key={index} className="">
+                                                            {link.name}: <a href={link.URL} target='_blank' className="">{link.URL}</a>
                                                         </div>
                                                 })
                                         }
