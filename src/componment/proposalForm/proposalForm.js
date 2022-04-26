@@ -5,6 +5,7 @@ import {getFirestore, collection, addDoc} from 'firebase/firestore';
 import {getDownloadURL, getStorage, ref, uploadBytes} from 'firebase/storage';
 import {getAuth} from 'firebase/auth';
 import ReactTagInput from "@pathofdev/react-tag-input";
+import {useNavigate} from 'react-router-dom';
 
 import "@pathofdev/react-tag-input/build/index.css";
 import {Form, Button, Container, Row} from "react-bootstrap";
@@ -12,6 +13,8 @@ import {Form, Button, Container, Row} from "react-bootstrap";
 import {ICT_COURSES, SEMESTERS} from '../../commons/constants';
 
 function ProposalForm() {
+
+    const navigate = useNavigate();
 
     const [teamName, setTeamName] = useState('');
     const [countMember, setCountMember] = useState([0]);
@@ -47,13 +50,15 @@ function ProposalForm() {
     const [selectedImage, setSelectedImage] = useState(null);
     const [imageUrl, setImageUrl] = useState(null);
     const [selectedSemester, setSelectedSemester] = useState('');
-    const [tags, setTags] = useState(["example tag"])
+    const [tags, setTags] = useState(["example tag"]);
     const [fileURLs, setFileURLs] = useState([{}]);
-
+    const [lock, setLock] = useState(false);
 
     const handleSubmit = async (e) => {
-        e.preventDefault()
-        console.log(teamMembers);
+        e.preventDefault();
+        if(lock == true) return;
+        else setLock(true);
+        alert('1-2초 가량 기다려 주세요!');
         
         if (teamName && teamDesc && course && selectedSemester && selectedImage) {
             //console.log(teamName, teamDesc, selectedSemester, teamMembers, course)
@@ -96,7 +101,8 @@ function ProposalForm() {
                 approved: false,
                 owner: auth.currentUser.email,
                 createdAt: currentTime
-            })
+            }).then(console.log('hello'));
+
             // member 저장
             if (course !== 'IDEA CENTER') {
                 console.log("this work but ?")
@@ -127,13 +133,11 @@ function ProposalForm() {
                     URL: link.URL
                 })
             })
-
-            // window
-            //     .location
-            //     .reload();
-
+            setLock(false);
+            alert('upload success');
+            // window.location.reload();
+            navigate("/");
         }
-
     }
 
     // control members
