@@ -1,7 +1,18 @@
 import {React, useState, useEffect} from 'react';
 
 import {firebase} from "../../firebase";
-import {getFirestore, collection, getDocs, where, query, limit, startAfter, startAt, orderBy, doc} from "firebase/firestore";
+import {
+    getFirestore,
+    collection,
+    getDocs,
+    where,
+    query,
+    limit,
+    startAfter,
+    startAt,
+    orderBy,
+    doc
+} from "firebase/firestore";
 import {getAuth} from 'firebase/auth';
 import {useNavigate} from "react-router-dom";
 import {useBottomScrollListener} from 'react-bottom-scroll-listener';
@@ -23,10 +34,11 @@ const Contents = () => {
     const navigate = useNavigate();
 
     const getFirestContents = async () => {
-        setCourse(selectedCourse)
-        //console.log(content.length)
-        if (content.length === 0) {
-            setContent([])
+        //setCourse(selectedCourse)
+        // console.log(content.length)
+        setContent([]);
+        // if (true) {
+            // console.log(content)
             // console.log('get first contents')
             let q = await query(
                 collection(db, 'CourseProjects'),
@@ -52,7 +64,8 @@ const Contents = () => {
                     setLastVisible(snapshot.docs[snapshot.docs.length - 1])
                 }
             })
-        }
+        // }
+
     }
 
     const getNextContents = () => {
@@ -94,12 +107,14 @@ const Contents = () => {
         }
 
     }
-    const getNewCourseContents = () => {
+    const getNewCourseContents = async () => {
         if (selectedCourse !== course) {
-            setCourse(selectedCourse)
-            setLastVisible(0)
-            setContent([])
+            setContent([]);
+            setCourse(selectedCourse);
+            setLastVisible(0);
             getFirestContents()
+            console.log(selectedCourse, course)
+
         }
 
     }
@@ -120,11 +135,16 @@ const Contents = () => {
             }
         });
     }
+
     useEffect(() => {
         getFirestContents();
         setLoading(false)
     }, [])
+
     useEffect(() => {}, [content])
+    useEffect(() => {}, [course])
+
+    // useEffect(() => {     console.log(selectedCourse); }, [selectedCourse])
 
     useBottomScrollListener(getNextContents)
 
@@ -147,15 +167,23 @@ const Contents = () => {
                             placeholder="검색어를 입력하세요"/>
                     </Form.Group>
                 </Form>
-                
-                <Form className='col' style={{marginRight: "100px"}}>
-                    <Button className='float-end ' onClick={getNewCourseContents} style={{
 
-                        }}>
+                <Form
+                    className='col'
+                    style={{
+                        marginRight: "100px"
+                    }}>
+                    <Button
+                        className='float-end '
+                        onClick={() => {
+                            setContent([]);
+                            getNewCourseContents();
+                        }}
+                        style={{}}>
                         이동
                     </Button>
                     <Form.Select
-                     className='float-end'
+                        className='float-end'
                         onChange={(e) => {
                             if (e.target.value !== "IDEA CENTER") {
                                 setSelectedCourse(e.target.value);
@@ -166,11 +194,13 @@ const Contents = () => {
                                     alert("Must be Login with Handong Official Email!");
                                 }
                             }
+                            console.log(e.target.value);
+
                         }}
                         style={{
                             display: "inline",
                             width: "250px",
-                            marginRight: "5px",
+                            marginRight: "5px"
                         }}>
                         {
                             ICT_COURSES.map((course, index) => {
@@ -178,7 +208,7 @@ const Contents = () => {
                             })
                         }
                     </Form.Select>
-                    
+
                 </Form>
             </Row>
 
