@@ -15,7 +15,7 @@ const SearchContents = () => {
     const navigate = useNavigate();
     
     const handleSearchSubmit = (e) => {
-
+        console.log(searchKeyword);
         e.preventDefault()
         if(searchKeyword !== ''  && searchKeyword !== undefined && searchKeyword !== null){
             setLastVisible(0)
@@ -27,8 +27,8 @@ const SearchContents = () => {
 
 
     const getFirestContents = async () => {
-        if(searchKeyword !== ''  && searchKeyword !== undefined && searchKeyword !== null && content.length === 0){
-            let q = await query(collection(db, 'Course Projects'), where('hashTag', 'array-contains', searchKeyword), limit(9))
+        if(searchKeyword !== ''  && searchKeyword !== undefined && searchKeyword !== null /*&& content.length === 0*/){
+            let q = await query(collection(db, 'CourseProjects'), where('hashTag', 'array-contains', searchKeyword), limit(9))
             getDocs(q).then((snapshot) => {
                 //console.log(snapshot.docs.length);
                 setContent((contents) => {
@@ -80,7 +80,7 @@ const SearchContents = () => {
                         label="검색어를 입력하세요 엔터 두번 클릭!"
                         className="mb-3"
                     >
-                        <Form.Control type="search" placeholder="제기개" value={searchKeyword} onChange={(e) => {
+                        <Form.Control type="search" /*placeholder="제기개"*/ value={searchKeyword} onChange={(e) => {
                         setSearchKeyword(e.target.value)
                     }} />
                     </FloatingLabel>
