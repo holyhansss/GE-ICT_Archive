@@ -1,47 +1,22 @@
-import {React, useState, useEffect} from 'react';
-import {useParams, useLocation, useNavigate} from "react-router-dom";
-import Header from '../header/header';
-import Footer from '../footer/footer';
+import { React, useState, useEffect } from 'react';
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import ReactTagInput from '@pathofdev/react-tag-input';
 
-import {
-    getFirestore,
-    collection,
-    getDocs,
-    doc,
-    updateDoc,
-    query
-} from 'firebase/firestore';
-import {getAuth} from 'firebase/auth';
+import { getFirestore, collection, getDocs, doc, updateDoc, query } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 
-import {TextField, makeStyles} from '@material-ui/core'
-import styled from 'styled-components';
-import oc from 'open-color';
-import {
-    Container,
-    Form,
-    Image,
-    Tab,
-    Tabs,
-    Button,
-    Row,
-} from 'react-bootstrap';
+import { Container, Form, Image, Tab, Tabs, Button, Row } from 'react-bootstrap';
 
 const DetailPage = () => {
-    const style = useStyles();
 
     const location = useLocation();
-    const navigate = useNavigate();
-    const {contentInfo, course} = location.state;
-    const {id} = useParams();
-    const [members, setMembers] = useState(null);
-    const [files, setFiles] = useState(null);
-    const [links, setLinks] = useState([]);
+    const { contentInfo, course } = location.state;
+    const { id } = useParams();
 
     // for editing
     const [edit, setEdit] = useState(false);
 
-    useEffect(() => {}, [edit]);
+    useEffect(() => { }, [edit]);
 
     const handleEditClick = (bool) => {
         setEdit(bool);
@@ -59,8 +34,8 @@ const DetailPage = () => {
                 }}>
                 {
                     edit
-                        ? <EditDetail contentInfo={contentInfo} handleEditClick={handleEditClick}/>
-                        : <ProjectDetail handleEditClick={handleEditClick}/>
+                        ? <EditDetail contentInfo={contentInfo} handleEditClick={handleEditClick} />
+                        : <ProjectDetail handleEditClick={handleEditClick} />
                 }
 
             </Container>
@@ -87,6 +62,10 @@ const EditDetail = (props) => {
         navigate("/");
         props.handleEditClick(false);
     }
+    const handleCancelOnClick = async () => {
+        props.handleEditClick(false);
+    }
+
     return (
         <Container className='w-75'>
             <Form className="d-box my-3">
@@ -101,7 +80,7 @@ const EditDetail = (props) => {
                     }}
                     style={{
                         height: '50px'
-                    }}/>
+                    }} />
                 <Form.Control
                     className='my-2'
                     type='description'
@@ -114,7 +93,7 @@ const EditDetail = (props) => {
                     }}
                     style={{
                         height: '200px'
-                    }}/>
+                    }} />
                 <ReactTagInput
                     tags={tags}
                     maxTags={10}
@@ -125,11 +104,13 @@ const EditDetail = (props) => {
                             newTags[newTags.length - 1] = newTags[newTags.length - 1].trim()
                         }
                         setTags(newTags)
-                    }}/>
-                <Button className='mt-2' onClick={handleUpdateOnClick}>
+                    }} />
+                <Button className='mt-2 mx-1' onClick={handleUpdateOnClick}>
                     Update
                 </Button>
-
+                <Button className='mt-2 mx-1' onClick={handleCancelOnClick}>
+                    Cancel
+                </Button>
             </Form>
 
         </Container>
@@ -143,8 +124,8 @@ const ProjectDetail = props => {
     const auth = getAuth();
 
     const location = useLocation();
-    const {contentInfo, course} = location.state;
-    const {id} = useParams();
+    const { contentInfo, course } = location.state;
+    const { id } = useParams();
     const [members, setMembers] = useState(null);
     const [files, setFiles] = useState(null);
     const [links, setLinks] = useState([]);
@@ -198,8 +179,8 @@ const ProjectDetail = props => {
                 src={contentInfo.image_url}
                 fluid="fluid"
                 style={{
-                    maxHeight: '800px'
-                }}/>
+                    maxHeight: '600px'
+                }} />
 
             <h1 className='mt-3'>{contentInfo.teamName}
                 {
@@ -214,8 +195,8 @@ const ProjectDetail = props => {
             </h1>
             <h4 className='mb-4'>{course} / {contentInfo.semester}</h4>
             <Container style={{
-                    width: '500px'
-                }}>
+                width: '500px'
+            }}>
                 <Tabs
                     defaultActiveKey="Abstract"
                     transition={false}
@@ -224,22 +205,22 @@ const ProjectDetail = props => {
                     <Tab eventKey="Abstract" title="Abstract">
                         {contentInfo.project_description}
                         <div>{
-                                contentInfo.hashTag !== undefined
-                                    ? contentInfo
-                                        .hashTag
-                                        .map(
-                                            (tag, index) => <div
-                                                className=""
-                                                key={index}
-                                                style={{
-                                                    display: 'inline-block',
-                                                    padding: "20px 5px 2px 5px",
-                                                    fontSize: "13px",
-                                                    fontWeight: "bold"
-                                                }}>#{tag}</div>
-                                        )
-                                    : <div></div>
-                            }
+                            contentInfo.hashTag !== undefined
+                                ? contentInfo
+                                    .hashTag
+                                    .map(
+                                        (tag, index) => <div
+                                            className=""
+                                            key={index}
+                                            style={{
+                                                display: 'inline-block',
+                                                padding: "20px 5px 2px 5px",
+                                                fontSize: "13px",
+                                                fontWeight: "bold"
+                                            }}>#{tag}</div>
+                                    )
+                                : <div></div>
+                        }
                         </div>
                     </Tab>
                     <Tab eventKey="members" title="members">
@@ -248,7 +229,7 @@ const ProjectDetail = props => {
                                 members === null
                                     ? <div>sss</div>
                                     : members.map(
-                                        (member, index) => <TeamMemberInfo key={index}>{index + 1}. {member.name}({member.classOf})</TeamMemberInfo>
+                                        (member, index) => <div key={index}>{index + 1}. {member.name}({member.classOf})</div>
                                     )
                             }
                         </Container>
@@ -258,42 +239,42 @@ const ProjectDetail = props => {
                             .currentUser
                             .email
                             .includes("@handong.ac.kr")
-                                ? <Tab eventKey="files" title="files" disabled="disabled"></Tab>
-                                : (
-                                        files == null
-                                        ? <div>No File Exist</div>
-                                        : <Tab eventKey="files" title="files">
-                                            {
-                                                files.map(
-                                                    (file, index) => <Row md='auto' className='my-2' style={{ width: '50%'}}><Button key={index} className="" variant='secondary'>
-                                                        <img src="https://img.icons8.com/material-sharp/18/000000/download--v1.png"/>
-                                                        <a href={file.URL} target="_blank" className="mx-1" style={{ color: 'black'}}>{file.name}
-                                                            Download</a>
-                                                    </Button></Row>
-                                                )
-                                            }</Tab>
-                                    )
+                            ? <Tab eventKey="files" title="files" disabled={true}></Tab>
+                            : (
+                                files == null
+                                    ? <div>No File Exist</div>
+                                    : <Tab eventKey="files" title="files">
+                                        {
+                                            files.map(
+                                                (file, index) => <Row key={index} md='auto' className='my-2' style={{ width: '50%' }}><Button className="" variant='secondary'>
+                                                    <img src="https://img.icons8.com/material-sharp/18/000000/download--v1.png" />
+                                                    <a href={file.URL} target="_blank" className="mx-1" style={{ color: 'black' }}>{file.name}
+                                                        Download</a>
+                                                </Button></Row>
+                                            )
+                                        }</Tab>
+                            )
                     }
                     {
                         auth.currentUser === null || !auth
                             .currentUser
                             .email
                             .includes("@handong.ac.kr")
-                                ? <Tab eventKey="links" title="links" disabled="disabled"></Tab>
-                                : <Tab eventKey="links" title="links">
-                                        {
-                                            links.length === 0
-                                                ? <div></div>
-                                                : links.map((link, index) => {
-                                                    if (link.name === '' && link.URL === '') 
-                                                        return <div key={index}></div>
-                                                    else 
-                                                        return <div key={index} className="">
-                                                            {link.name}: <a href={link.URL} target='_blank' className="">{link.URL}</a>
-                                                        </div>
-                                                })
-                                        }
-                                    </Tab>
+                            ? <Tab eventKey="links" title="links" disabled={true}></Tab>
+                            : <Tab eventKey="links" title="links">
+                                {
+                                    links.length === 0
+                                        ? <div></div>
+                                        : links.map((link, index) => {
+                                            if (link.name === '' && link.URL === '')
+                                                return <div key={index}></div>
+                                            else
+                                                return <div key={index} className="">
+                                                    {link.name}: <a href={link.URL} target='_blank' className="">{link.URL}</a>
+                                                </div>
+                                        })
+                                }
+                            </Tab>
                     }
                 </Tabs>
             </Container>
@@ -305,97 +286,3 @@ const ProjectDetail = props => {
 }
 
 export default DetailPage;
-
-const useStyles = makeStyles({
-    download: {
-        backgroundColor: 'gray',
-        margin: '2.5px 0px 2.5px 0px',
-        width: '35%'
-    },
-    downloadAnchor: {
-        color: 'black',
-        textDecoration: 'none',
-        margin: '0px 0px 0px 10px'
-    },
-    linksContainer: {
-        margin: '0px 0px 30px 0px'
-    },
-    URL: {
-        color: 'black'
-    },
-    loginWarning: {
-        padding: '3px 15px 3px 15px',
-        backgroundColor: `${oc.gray[4]}`,
-        fontSize: '13px',
-        borderRadius: '30px'
-    },
-    tags: {
-        display: 'inline-block',
-        color: 'black',
-        backgroundColor: `${oc.gray[3]}`,
-        borderRadius: '30px',
-        fontSize: '13px',
-        fontWeight: 'bold',
-        margin: '20px 2.5px 0px 2.5px',
-        padding: '2px 5px 2px 5px'
-    },
-    editButton: {
-        color: 'black',
-        margin: '0px 0px 5px 10px',
-        backgroundColor: 'gray',
-        height: '30px'
-    },
-    updateButton: {
-        backgroundColor: 'skyblue',
-        margin: '10px 0px 40% 0px'
-    },
-    formElement: {
-        margin: '10px 0px 10px 0px'
-    }
-});
-
-const ContentWrapper = styled.div `
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    width: 100%;
-    text-align: center;
-    align-items: center;
-  
-  `
-const Content = styled.div `
-    display: flex;
-    flex-direction: column;
-    width: 60%;
-    color: black;
-    margin-top: 100px;
-    align-items: center;
-  `
-const MainImage = styled.img `
-    flex: 3;
-    max-height: 800px;
-    max-width: 100%;
-    object-fit: contain;
-  `
-
-const TeamName = styled.div `
-    margin-top: 20px;
-    font-size: 35px;
-  `
-
-const SchoolOf = styled.div `
-    font-size: 20px;
-  `
-const TeamMembers = styled.div `
-    margin-top: 10px;
-  `
-const TeamMemberInfo = styled.div `
-  
-  `
-
-const ProjectDesc = styled.div `
-    margin: 0px 10% 50px 10%;
-    margin-top: 40px;
-    text-align: left;
-    
-  `

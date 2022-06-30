@@ -14,7 +14,7 @@ import {
     doc
 } from "firebase/firestore";
 import {getAuth} from 'firebase/auth';
-import {useNavigate} from "react-router-dom";
+import {useNavigate, Link} from "react-router-dom";
 import {useBottomScrollListener} from 'react-bottom-scroll-listener';
 
 import {Card, Row, Col, Form, Button} from 'react-bootstrap';
@@ -221,33 +221,46 @@ const Contents = () => {
                             style={{
                                 backgroundColor: ''
                             }}>
-                            <Card
-                                onClick={() => {
-                                    handleCardClick(index, doc)
-                                }}>
-                                <Card.Img variant="top" src={doc.image_url}/>
-                                <Card.Body>
-                                    <Card.Title>{doc.teamName}</Card.Title>
-                                    {/* <Card.Text> */}
-                                    {
-                                        doc.hashTag !== undefined
-                                            ? doc
-                                                .hashTag
-                                                .map(
-                                                    (tag, index) => <div
-                                                        key={index}
-                                                        style={{
-                                                            display: 'inline-block',
-                                                            padding: "2px 5px 2px 5px",
-                                                            fontSize: "13px",
-                                                            fontWeight: "bold"
-                                                        }}>#{tag}</div>
-                                                )
-                                            : <></>
-                                    }
-                                    {/* </Card.Text> */}
-                                </Card.Body>
-                            </Card>
+                            <Link
+                                to={{
+                                    pathname: `/detailpages/${index}`,
+                                }}
+                                state={{
+                                    id: index,
+                                    course: doc.course,
+                                    contentInfo: doc
+                                }}
+                                style={{textDecoration: 'none', color: 'black'}}
+                                >
+                                <Card
+                                    onClick={() => {
+                                        //handleCardClick(index, doc)
+                                    }}
+                                        >
+                                    <Card.Img variant="top" src={doc.image_url} style={{height: '270px'}}/>
+                                    <Card.Body>
+                                        <Card.Title>{doc.teamName}</Card.Title>
+                                        {/* <Card.Text> */}
+                                        {
+                                            doc.hashTag !== undefined
+                                                ? doc
+                                                    .hashTag
+                                                    .map(
+                                                        (tag, index) => <div
+                                                            key={index}
+                                                            style={{
+                                                                display: 'inline-block',
+                                                                padding: "2px 5px 2px 5px",
+                                                                fontSize: "13px",
+                                                                fontWeight: "bold"
+                                                            }}>#{tag}</div>
+                                                    )
+                                                : <></>
+                                        }
+                                        {/* </Card.Text> */}
+                                    </Card.Body>
+                                </Card>
+                            </Link>
                         </Col>
                     ))
                 }

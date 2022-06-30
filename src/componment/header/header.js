@@ -1,11 +1,11 @@
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 
 import firebase from '../../firebase';
-import {getAuth, signInWithPopup, GoogleAuthProvider, signOut} from "firebase/auth";
-import {getDocs, query, collection, getFirestore} from "firebase/firestore";
-import {Link, useNavigate} from 'react-router-dom';
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
+import { getDocs, query, collection, getFirestore } from "firebase/firestore";
+import { Link, useNavigate } from 'react-router-dom';
 
-import {Navbar, Nav, Container, NavDropdown} from 'react-bootstrap';
+import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
 
 const Header = () => {
 
@@ -15,7 +15,7 @@ const Header = () => {
     const auth = getAuth();
     const db = getFirestore();
 
-    useEffect(() => {}, [user]);
+    useEffect(() => { }, [user]);
 
     useEffect(() => {
         const FetchContents = async () => {
@@ -59,8 +59,13 @@ const Header = () => {
             variant="dark"
             className='navBar'>
             <Container>
-                <Navbar.Brand href="/">GE & ICT</Navbar.Brand>
-                <Navbar.Toggle aria-controls="responsive-navbar-nav"/>
+                <Link
+                    to={{
+                        pathname: `/`,
+                    }}
+                    style={{ textDecoration: 'none', color: 'black' }}
+                ><Navbar.Brand>GE & ICT</Navbar.Brand></Link>
+                <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                 <Navbar.Collapse id="responsive-navbar-nav">
                     <Nav className="me-auto">
                         <div
@@ -73,18 +78,22 @@ const Header = () => {
 
                         auth.currentUser === null
                             ? <Nav>
-                                    <Nav.Link onClick={handleLoginClick}>Login</Nav.Link>
-                                </Nav>
+                                <Nav.Link onClick={handleLoginClick}>Login</Nav.Link>
+                            </Nav>
                             : professors.includes(auth.currentUser.email)
-                                ? <Nav>
-                                        <Nav.Link href="/professorApprovalpage">Approval</Nav.Link>
-                                        <Nav.Link onClick={handleProposalClick}>Proposal</Nav.Link>
-                                        <Nav.Link onClick={handleLogoutClick}>Logout</Nav.Link>
-                                    </Nav>
+                                ? <Nav as='ul'>
+                                   <Link to={{
+                                        pathname: `/professorApprovalpage`,
+                                    }} style={{ textDecoration: 'none', color: 'rgba(255,255,255,.55)' }}> <Nav.Link as='li'>Approval</Nav.Link></Link>
+                                    <Nav.Link onClick={handleProposalClick}>Proposal</Nav.Link>
+                                    <Nav.Link onClick={handleLogoutClick}>Logout</Nav.Link>
+                                </Nav>
                                 : <Nav>
-                                        <Nav.Link href="/proposalpage">Proposal</Nav.Link>
-                                        <Nav.Link onClick={handleLogoutClick}>Logout</Nav.Link>
-                                    </Nav>
+                                    <Link to={{
+                                        pathname: `/professorApprovalpage`,
+                                    }} style={{ textDecoration: 'none', color: 'rgba(255,255,255,.55)' }}> <Nav.Link as='li'>Approval</Nav.Link></Link>
+                                    <Nav.Link onClick={handleLogoutClick}>Logout</Nav.Link>
+                                </Nav>
                     }
 
                 </Navbar.Collapse>
