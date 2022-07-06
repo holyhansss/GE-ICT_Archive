@@ -2,134 +2,26 @@ import { React, useState, useEffect } from 'react';
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import ReactTagInput from '@pathofdev/react-tag-input';
 
-import { getFirestore, collection, getDocs, doc, updateDoc, query } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, doc, updateDoc, query, setDoc, addDoc, } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
 import { Container, Form, Image, Tab, Tabs, Button, Row } from 'react-bootstrap';
 
 const DetailPage = () => {
 
+    const db = getFirestore();
+
     const location = useLocation();
     const { contentInfo, course } = location.state;
     const { id } = useParams();
 
-    // for editing
-    const [edit, setEdit] = useState(false);
-
-    useEffect(() => { }, [edit]);
-
-    const handleEditClick = (bool) => {
-        setEdit(bool);
-    };
-
-    return (
-        <Container className='mt-5 d-flex'>
-            <Container
-                style={{
-                    justifyContent: 'space-around',
-                    flexWrap: 'wrap',
-                    width: '100%',
-                    textAlign: 'center',
-                    alignItems: 'center'
-                }}>
-                {
-                    edit
-                        ? <EditDetail contentInfo={contentInfo} handleEditClick={handleEditClick} />
-                        : <ProjectDetail handleEditClick={handleEditClick} />
-                }
-
-            </Container>
-        </Container>
-    );
-};
-
-const EditDetail = (props) => {
-
-    const db = getFirestore();
-    const auth = getAuth();
-    const navigate = useNavigate();
-
-    const [teamName, setTeamName] = useState(props.contentInfo.teamName);
-    const [teamDesc, setTeamDesc] = useState(props.contentInfo.project_description);
-    const [tags, setTags] = useState(props.contentInfo.hashTag);
-
-    const handleUpdateOnClick = async () => {
-        await updateDoc(doc(db, "CourseProjects", props.contentInfo.id), {
-            "teamName": teamName,
-            "project_description": teamDesc,
-            "hashTag": tags
-        }).then(alert("updated!"));
-        navigate("/");
-        props.handleEditClick(false);
-    }
-    const handleCancelOnClick = async () => {
-        props.handleEditClick(false);
-    }
-
-    return (
-        <Container className='w-75'>
-            <Form className="d-box my-3">
-                <Form.Control
-                    className='my-2'
-                    type='title'
-                    placeholder='Title *'
-                    value={teamName}
-                    required="required"
-                    onChange={(e) => {
-                        setTeamName(e.target.value);
-                    }}
-                    style={{
-                        height: '50px'
-                    }} />
-                <Form.Control
-                    className='my-2'
-                    type='description'
-                    as='textarea'
-                    placeholder='Project Description *'
-                    required="required"
-                    value={teamDesc}
-                    onChange={(e) => {
-                        setTeamDesc(e.target.value)
-                    }}
-                    style={{
-                        height: '200px'
-                    }} />
-                <ReactTagInput
-                    tags={tags}
-                    maxTags={10}
-                    removeOnBackspace={true}
-                    placeholder="HashTag: 단어 치고 Enter!"
-                    onChange={(newTags) => {
-                        if (newTags.length > 0) {
-                            newTags[newTags.length - 1] = newTags[newTags.length - 1].trim()
-                        }
-                        setTags(newTags)
-                    }} />
-                <Button className='mt-2 mx-1' onClick={handleUpdateOnClick}>
-                    Update
-                </Button>
-                <Button className='mt-2 mx-1' onClick={handleCancelOnClick}>
-                    Cancel
-                </Button>
-            </Form>
-
-        </Container>
-    );
-
-}
-
-const ProjectDetail = props => {
-
-    const db = getFirestore();
-    const auth = getAuth();
-
-    const location = useLocation();
-    const { contentInfo, course } = location.state;
-    const { id } = useParams();
     const [members, setMembers] = useState(null);
     const [files, setFiles] = useState(null);
     const [links, setLinks] = useState([]);
     const [professors, setProfessors] = useState([]);
+
+    // for editing
+    const [edit, setEdit] = useState(false);
 
     useEffect(() => {
         const FetchContents = async () => {
@@ -168,6 +60,60 @@ const ProjectDetail = props => {
         };
         FetchContents();
     }, [contentInfo]);
+
+
+    useEffect(() => { }, [edit]);
+
+    const handleEditClick = (bool) => {
+        setEdit(bool);
+    };
+
+    return (
+        <Container className='mt-5 d-flex'>
+            <Container
+                style={{
+                    justifyContent: 'space-around',
+                    flexWrap: 'wrap',
+                    width: '100%',
+                    textAlign: 'center',
+                    alignItems: 'center'
+                }}>
+                {
+                    edit
+                        ? <EditDetail 
+                            contentInfo={contentInfo} 
+                            course={course} 
+                            members={members} 
+                            files={files} 
+                            links={links} 
+                            professors={professors} 
+                            handleEditClick={handleEditClick} />
+                        : <ProjectDetail 
+                            contentInfo={contentInfo} 
+                            course={course} 
+                            members={members} 
+                            files={files} 
+                            links={links} 
+                            professors={professors} 
+                            handleEditClick={handleEditClick} />
+                }
+            </Container>
+        </Container>
+    );
+};
+
+
+
+const ProjectDetail = props => {
+
+    const db = getFirestore();
+    const auth = getAuth();
+    const [contentInfo, setContentInfo] = useState(props.contentInfo);
+    const members = props.members;
+    const files = props.files;
+    const links = props.links;
+    const professors = props.professors;
+    const course = props.course;
 
     const passEdit = () => {
         props.handleEditClick(true);
@@ -283,6 +229,111 @@ const ProjectDetail = props => {
 
         </Container>
     );
+}
+
+const EditDetail = (props) => {
+
+    const db = getFirestore();
+    const auth = getAuth();
+    const navigate = useNavigate();
+
+    const [teamName, setTeamName] = useState(props.contentInfo.teamName);
+    const [teamDesc, setTeamDesc] = useState(props.contentInfo.project_description);
+    const [tags, setTags] = useState(props.contentInfo.hashTag);
+
+    const [members, setMembers] = useState(props.members);
+    const [files, setFiles] = useState(props.files);
+    const [links, setLinks] = useState(props.links);
+    const [professors, setProfessors] = useState(props.professors);
+
+    const handleUpdateOnClick = async () => {
+        await updateDoc(doc(db, "CourseProjects", props.contentInfo.id), {
+            "teamName": teamName,
+            "project_description": teamDesc,
+            "hashTag": tags
+        }).then(alert("updated!"));
+        navigate("/");
+        props.handleEditClick(false);
+    }
+    const handleCancelOnClick = async () => {
+        props.handleEditClick(false);
+    }
+
+    const updateLinks = () => {
+        // const LinksCollectionRef = collection(docRef, 'Links')
+        // links.map((link) => {
+        //     addDoc(LinksCollectionRef, {
+        //         name: link.name,
+        //         URL: link.URL
+        //     })
+        // })
+    }
+    
+
+    return (
+        <Container className=''>
+            <Row>
+                <Image className="col-5"
+                    src={props.contentInfo.image_url}
+                    fluid="fluid"
+                    style={{
+
+                    }} />
+                <Form className="d-box my-3 col-7">
+                    <Form.Control
+                        className='my-2'
+                        type='title'
+                        placeholder='Title *'
+                        value={teamName}
+                        required="required"
+                        onChange={(e) => {
+                            setTeamName(e.target.value);
+                        }}
+                        style={{
+                            height: '50px'
+                        }} />
+                    <Form.Control
+                        className='my-2'
+                        type='description'
+                        as='textarea'
+                        placeholder='Project Description *'
+                        required="required"
+                        value={teamDesc}
+                        onChange={(e) => {
+                            setTeamDesc(e.target.value)
+                        }}
+                        style={{
+                            height: '200px'
+                        }} />
+                    <ReactTagInput
+                        tags={tags}
+                        maxTags={10}
+                        removeOnBackspace={true}
+                        placeholder="HashTag: 단어 치고 Enter!"
+                        onChange={(newTags) => {
+                            if (newTags.length > 0) {
+                                newTags[newTags.length - 1] = newTags[newTags.length - 1].trim()
+                            }
+                            setTags(newTags)
+                        }} />
+                </Form>
+            </Row>
+            {
+                links.map((link)=> {
+                    console.log(link)
+                })
+                
+            }
+            {console.log(members, files, links, professors)}
+            <Button className='mt-2 mx-1' onClick={handleUpdateOnClick}>
+                Update
+            </Button>
+            <Button className='mt-2 mx-1' onClick={handleCancelOnClick}>
+                Cancel
+            </Button>
+        </Container>
+    );
+
 }
 
 export default DetailPage;
