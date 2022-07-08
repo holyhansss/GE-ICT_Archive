@@ -101,7 +101,7 @@ function ProposalForm() {
                 approved: false,
                 owner: auth.currentUser.email,
                 createdAt: currentTime
-            }).then(console.log('hello'));
+            });
 
             // member 저장
             if (course !== 'IDEA CENTER') {
@@ -515,16 +515,14 @@ function ProposalForm() {
                         className='me-1'
                         onClick={() => {
                             addInputLinks()
-                        }
-}>
+                        }}>
                         +
                     </Button>
                     <Button
                         variant='outline-secondary'
                         onClick={() => {
                             subInputLinks()
-                        }
-}>
+                        }}>
                         -
                     </Button>
                 </Container>

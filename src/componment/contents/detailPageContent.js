@@ -2,7 +2,7 @@ import { React, useState, useEffect } from 'react';
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import ReactTagInput from '@pathofdev/react-tag-input';
 
-import { getFirestore, collection, getDocs, doc, updateDoc, query, setDoc, addDoc, } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, doc, updateDoc, query, setDoc, addDoc, deleteDoc, } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
 import { Container, Form, Image, Tab, Tabs, Button, Row } from 'react-bootstrap';
@@ -19,6 +19,8 @@ const DetailPage = () => {
     const [files, setFiles] = useState(null);
     const [links, setLinks] = useState([]);
     const [professors, setProfessors] = useState([]);
+
+    const [countLinks, setCountLinks] = useState([0]);
 
     // for editing
     const [edit, setEdit] = useState(false);
@@ -42,11 +44,12 @@ const DetailPage = () => {
             const linksData = await getDocs(
                 collection(db, 'CourseProjects', contentInfo.id, "Links")
             );
-            setLinks(linksData.docs.map((doc) => ({
+            setLinks(linksData.docs.map((doc, index) => ({
                 ...doc.data(),
-                id: doc.id
+                //id: doc.id
+                id: index,
+                uid: doc.id
             })));
-            //setEditLinks(linksData.docs.map((doc) => ({...doc.data(), id: doc.id})));
 
             const professorData = await getDocs(query(collection(db, "professors")))
             professorData.forEach((professorInfo) => {
@@ -114,7 +117,7 @@ const ProjectDetail = props => {
     const links = props.links;
     const professors = props.professors;
     const course = props.course;
-
+    
     const passEdit = () => {
         props.handleEditClick(true);
     };
@@ -173,7 +176,7 @@ const ProjectDetail = props => {
                         <Container>
                             {
                                 members === null
-                                    ? <div>sss</div>
+                                    ? <div>No Members</div>
                                     : members.map(
                                         (member, index) => <div key={index}>{index + 1}. {member.name}({member.classOf})</div>
                                     )
@@ -246,30 +249,98 @@ const EditDetail = (props) => {
     const [links, setLinks] = useState(props.links);
     const [professors, setProfessors] = useState(props.professors);
 
+    const [countLinks, setCountLinks] = useState(props.links);
+    const [OriginalLinks, setOriginalLinks] = useState(props.links);
+    const linksCountBeforeChange = props.links.length;
+
     const handleUpdateOnClick = async () => {
-        await updateDoc(doc(db, "CourseProjects", props.contentInfo.id), {
+        const docRef = doc(db, "CourseProjects", props.contentInfo.id);
+
+        await updateDoc(docRef, {
             "teamName": teamName,
             "project_description": teamDesc,
             "hashTag": tags
-        }).then(alert("updated!"));
-        navigate("/");
+        })
+        
+        // update links
+        const colRef = collection(docRef, "Links");
+        if(OriginalLinks !== links){
+            for(let i=0; i<linksCountBeforeChange; i++){
+                const linksDocRef = doc(docRef, "Links", OriginalLinks[i].uid)
+                await deleteDoc(linksDocRef)
+            }
+            links.map(async (link) => {
+                await addDoc(colRef, {
+                    name: link.name,
+                    URL: link.URL
+                })
+            });
+        }
+        alert('updated!');
+
         props.handleEditClick(false);
+        navigate("/");
     }
     const handleCancelOnClick = async () => {
         props.handleEditClick(false);
     }
-
-    const updateLinks = () => {
-        // const LinksCollectionRef = collection(docRef, 'Links')
-        // links.map((link) => {
-        //     addDoc(LinksCollectionRef, {
-        //         name: link.name,
-        //         URL: link.URL
-        //     })
-        // })
-    }
     
+    // if bool = true: adding
+    // else sub
+    const inputLinks = (bool) => {
+        if(bool === true){
+            let countArr = [...countLinks]
+            let counter = countArr.slice(-1)[0]
+        
+            counter += 1
+            countArr.push(counter)
+            setCountLinks(countArr)
+            addLinksArray()
+        }
+        else {
+            let countArr = [...countLinks]
+            countArr.pop()
+            if (links.length <= 1) {} else {
+                setCountLinks(countArr)
+                subLinksArray()
+            }
+        }
+    }
+    const addLinksArray = () => {
+        const newLink = {
+            id: links.length,
+            name: '',
+            URL: ''
+        }
+        setLinks(links.concat(newLink))
+    }
+    const subLinksArray = () => {
+        let linksArr = [...links]
+        linksArr.pop()
+        setLinks(linksArr)
+    }
 
+
+    const handleLinkNameChange = (targetId, _linkName) => {
+        setLinks(links.map(
+            (link) => link.id === targetId
+                ? {
+                    ...link,
+                    name: _linkName
+                }
+                : link
+        ))
+    }
+    const handleLinkURLChange = (targetId, _URL) => {
+        setLinks(links.map(
+            (link) => link.id === targetId
+                ? {
+                    ...link,
+                    URL: _URL
+                }
+                : link
+        ))
+    }
     return (
         <Container className=''>
             <Row>
@@ -318,13 +389,63 @@ const EditDetail = (props) => {
                         }} />
                 </Form>
             </Row>
-            {
-                links.map((link)=> {
-                    console.log(link)
-                })
+            <Row>
+                <Container className='my-2'>
+                    {
+                        countLinks.map((item, index) => {
+                            return (
+                                <Row key={index} className="mb-2">
+                                    <Form.Control
+                                        key={"LinkName" + index}
+                                        className='me-1'
+                                        type='linkName'
+                                        value={links[index].name}
+                                        placeholder='Link'
+                                        style={{
+                                            width: '20%'
+                                        }}
+                                        onChange={(e) => {
+                                            handleLinkNameChange(index, e.target.value)
+                                        }}
+                                        label='LINK NAME'/>
+                                    <Form.Control
+                                        key={"LinkURL" + index}
+                                        className='me-1'
+                                        type='linkURL'
+                                        placeholder='Link URL'
+                                        value={links[index].URL}
+                                        style={{
+                                            width: '75%'
+                                        }}
+                                        onChange={(e) => {
+                                            handleLinkURLChange(index, e.target.value)
+                                        }}
+                                        label='Link URL'/>
+                                </Row>
+
+                            );
+                        })
+                    }
+                    <Button
+                        variant='outline-secondary'
+                        className='me-1'
+                        onClick={() => {
+                            inputLinks(true)
+                        }}>
+                        Add Link +
+                    </Button>
+                    <Button
+                        variant='outline-secondary'
+                        onClick={() => {
+                            inputLinks(false)
+                        }}>
+                        Del Link -
+                    </Button>
+                </Container>
+            </Row>
+            <Row>
                 
-            }
-            {console.log(members, files, links, professors)}
+            </Row>
             <Button className='mt-2 mx-1' onClick={handleUpdateOnClick}>
                 Update
             </Button>
@@ -332,8 +453,13 @@ const EditDetail = (props) => {
                 Cancel
             </Button>
         </Container>
+        
     );
 
 }
+
+
+
+
 
 export default DetailPage;

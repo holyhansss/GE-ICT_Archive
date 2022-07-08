@@ -24,7 +24,7 @@ function App() {
         <Route path='/proposalpage' element={<ProposalPage/>} ></Route>
         <Route path='/mypage' element={<MyPage/>} ></Route>  
         <Route path='/professorapprovalpage' element={<ProfessorApprovalPage/>} ></Route>  
-
+  
       </Routes>
     </BrowserRouter>
   );

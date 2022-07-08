@@ -7,7 +7,14 @@ export const ICT_COURSES = [
     '캡스톤 디자인',
     'IDEA CENTER',
 ]
-export const COLLECTION_NAME = 'CourseProject'
+
+export const COLLECTION_NAMES = [{
+    mainCollection: 'CourseProject',
+    member: 'members',
+    links: 'Links',
+    fileURLs: 'fileURLs',
+}]
+
 export const SEMESTERS  = [
     '2022-1',
     '2021-2',
@@ -16,6 +23,12 @@ export const SEMESTERS  = [
     '2020-1',
     '2019-2',
     '2019-1',
+    '2018-2',
+    '2018-1',
+    '2017-2',
+    '2017-1',
+    '2016-2',
+    '2016-1',
     '-',
 ]
 
