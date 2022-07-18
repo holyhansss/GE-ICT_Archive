@@ -2,10 +2,11 @@ import { React, useState, useEffect } from 'react';
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import ReactTagInput from '@pathofdev/react-tag-input';
 
-import { getFirestore, collection, getDocs, doc, updateDoc, query, setDoc, addDoc, deleteDoc, } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, doc, updateDoc, query, addDoc, deleteDoc, } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
 import { Container, Form, Image, Tab, Tabs, Button, Row } from 'react-bootstrap';
+import { getStorage, ref, deleteObject } from 'firebase/storage';
 
 const DetailPage = () => {
 
@@ -30,9 +31,10 @@ const DetailPage = () => {
             const memberData = await getDocs(
                 collection(db, 'CourseProjects', contentInfo.id, "members")
             );
-            setMembers(memberData.docs.map((doc) => ({
+            setMembers(memberData.docs.map((doc, index) => ({
                 ...doc.data(),
-                id: doc.id
+                id: index,
+                uid: doc.id
             })));
             const fileData = await getDocs(
                 collection(db, 'CourseProjects', contentInfo.id, "fileURLs")
@@ -197,9 +199,8 @@ const ProjectDetail = props => {
                                             files.map(
                                                 (file, index) => <Row key={index} md='auto' className='my-2' style={{ width: '50%' }}><Button className="" variant='secondary'>
                                                     <img src="https://img.icons8.com/material-sharp/18/000000/download--v1.png" />
-                                                    <a href={file.URL} target="_blank" className="mx-1" style={{ color: 'black' }}>{file.name}
-                                                        Download</a>
-                                                </Button></Row>
+                                                    <a download href={file.URL} target="_blank" className="mx-1" style={{ color: 'black' }}>{file.name} Download</a>
+                                                </Button></Row>                                              
                                             )
                                         }</Tab>
                             )
@@ -238,6 +239,7 @@ const EditDetail = (props) => {
 
     const db = getFirestore();
     const auth = getAuth();
+    const storage = getStorage();
     const navigate = useNavigate();
 
     const [teamName, setTeamName] = useState(props.contentInfo.teamName);
@@ -245,15 +247,32 @@ const EditDetail = (props) => {
     const [tags, setTags] = useState(props.contentInfo.hashTag);
 
     const [members, setMembers] = useState(props.members);
-    const [files, setFiles] = useState(props.files);
+    const [newFiles, setNewFiles] = useState([{
+        id: 0,
+        name: '',
+    }]);
+    const [oldFiles, setOldFiles] = useState(props.files);
+
     const [links, setLinks] = useState(props.links);
     const [professors, setProfessors] = useState(props.professors);
 
+    const [countMembers, setCountMembers] = useState(props.members);
     const [countLinks, setCountLinks] = useState(props.links);
-    const [OriginalLinks, setOriginalLinks] = useState(props.links);
+    const [countOldFiles, setCountOldFiles] = useState(props.files);
+    const [countNewFiles, setCountNewFiles] = useState([0]);
+
+    const [originalMembers, setOriginalMembers] = useState(props.members);
+    const [originalLinks, setOriginalLinks] = useState(props.links);
+    
     const linksCountBeforeChange = props.links.length;
+    const membersCountBeforeChange = props.members.length;
 
     const handleUpdateOnClick = async () => {
+        if(!professors.includes(auth.currentUser.email) && !props.contentInfo.owner === auth.currentUser.email){
+            alert("only authorized user can update states");
+            return 0;
+        }
+
         const docRef = doc(db, "CourseProjects", props.contentInfo.id);
 
         await updateDoc(docRef, {
@@ -263,19 +282,38 @@ const EditDetail = (props) => {
         })
         
         // update links
-        const colRef = collection(docRef, "Links");
-        if(OriginalLinks !== links){
+        const linkColRef = collection(docRef, "Links");
+        if(originalLinks !== links){
             for(let i=0; i<linksCountBeforeChange; i++){
-                const linksDocRef = doc(docRef, "Links", OriginalLinks[i].uid)
+                const linksDocRef = doc(docRef, "Links", originalLinks[i].uid)
                 await deleteDoc(linksDocRef)
             }
             links.map(async (link) => {
-                await addDoc(colRef, {
+                await addDoc(linkColRef, {
                     name: link.name,
                     URL: link.URL
                 })
             });
         }
+
+        // update members
+        const memberColRef = collection(docRef, "members");
+        if(originalMembers !== members){
+            for(let i=0; i<membersCountBeforeChange; i++){
+                const membersDocRef = doc(docRef, "members", originalMembers[i].uid)
+                await deleteDoc(membersDocRef)
+            }
+            members.map(async (member) => {
+                await addDoc(memberColRef, {
+                    name: member.name,
+                    classOf: member.classOf
+                })
+            });
+        }
+
+        
+
+
         alert('updated!');
 
         props.handleEditClick(false);
@@ -284,21 +322,22 @@ const EditDetail = (props) => {
     const handleCancelOnClick = async () => {
         props.handleEditClick(false);
     }
-    
+    const handleDeleteFile = async (i) => {
+        console.log('jhello' + i)
+    }
     // if bool = true: adding
     // else sub
     const inputLinks = (bool) => {
+        let countArr = [...countLinks]
+
         if(bool === true){
-            let countArr = [...countLinks]
             let counter = countArr.slice(-1)[0]
-        
             counter += 1
             countArr.push(counter)
             setCountLinks(countArr)
             addLinksArray()
         }
         else {
-            let countArr = [...countLinks]
             countArr.pop()
             if (links.length <= 1) {} else {
                 setCountLinks(countArr)
@@ -319,27 +358,113 @@ const EditDetail = (props) => {
         linksArr.pop()
         setLinks(linksArr)
     }
-
-
-    const handleLinkNameChange = (targetId, _linkName) => {
-        setLinks(links.map(
-            (link) => link.id === targetId
-                ? {
-                    ...link,
-                    name: _linkName
-                }
-                : link
-        ))
+    const inputMembers = (bool) => {
+        let countArr = [...countMembers]
+        if(bool === true){
+            let counter = countArr.slice(-1)[0]
+            counter += 1
+            countArr.push(counter)
+            setCountMembers(countArr)
+            addMembersArray()
+        }
+        else {
+            countArr.pop()
+            if (members.length <= 1) {} else {
+                setCountMembers(countArr)
+                subMembersArray()
+            }
+        }
     }
-    const handleLinkURLChange = (targetId, _URL) => {
-        setLinks(links.map(
-            (link) => link.id === targetId
-                ? {
-                    ...link,
-                    URL: _URL
-                }
-                : link
-        ))
+    const addMembersArray = () => {
+        const newMember = {
+            id: members.length,
+            name: '',
+            classOf: ''
+        }
+        setMembers(members.concat(newMember))
+    }
+    const subMembersArray = () => {
+        let membersArr = [...members]
+        membersArr.pop()
+        setMembers(membersArr)
+    }
+    const inputFiles = (bool) => {
+        let countArr = [...countNewFiles]
+        if(bool === true){
+            let counter = countArr.slice(-1)[0]
+            counter += 1
+            countArr.push(counter)
+            setCountNewFiles(countArr)
+            addFilesArray()
+        }
+        else {
+            countArr.pop()
+            if (newFiles.length <= 1) {} else {
+                setCountNewFiles(countArr)
+                subFilesArray()
+            }
+        }
+    }
+    const addFilesArray = () => {
+        const newFile = {
+            id: newFiles.length,
+            name: '',
+        }
+        setNewFiles(newFiles.concat(newFile))
+    }
+    const subFilesArray = () => {
+        let filesArr = [...newFiles]
+        filesArr.pop();
+        setNewFiles(filesArr);
+    }
+
+
+    const handleLinkChange = (targetId, content, contentId) => {
+        if(contentId === 0){
+            setLinks(links.map((link) => 
+                link.id === targetId
+                    ? {...link, name: content}
+                    : link
+            ));
+        } else if(contentId === 1){
+            setLinks(links.map((link) => 
+                link.id === targetId
+                    ? {...link, URL: content}
+                    : link
+            ));
+        }
+    }
+    const handleMemberChange = (targetId, content, contentId) => {
+        if(contentId === 0){
+            setMembers(members.map((member) => 
+                member.id === targetId
+                    ? {...member, name: content}
+                    : member
+            ));
+        } else if(contentId === 1){
+            setMembers(members.map((member) => 
+                member.id === targetId
+                    ? {...member, classOf: content}
+                    : member
+            ));
+        }
+        console.log(members);   
+    }
+    const handleFilesChange = (targetId, content, contentId) => {
+        if(contentId === 0){
+            setNewFiles(newFiles.map((file) => 
+                file.id === targetId
+                    ? {...file, name: content}
+                    : file
+            ));
+        } else if(contentId === 1){
+            setNewFiles(newFiles.map((file_) => 
+                file_.id === targetId
+                    ? {...file_, content: content}
+                    : file_
+            ));
+        }
+        console.log(newFiles)
     }
     return (
         <Container className=''>
@@ -389,63 +514,186 @@ const EditDetail = (props) => {
                         }} />
                 </Form>
             </Row>
-            <Row>
-                <Container className='my-2'>
+            <Container>
+                <Row>
+                    <Container className='my-2'>
+                        {
+                            countLinks.map((item, index) => {
+                                return (
+                                    <Row key={index} className="mb-2">
+                                        <Form.Control
+                                            key={"LinkName" + index}
+                                            className='me-1'
+                                            type='linkName'
+                                            value={links[index].name}
+                                            placeholder='Link'
+                                            style={{
+                                                width: '20%'
+                                            }}
+                                            onChange={(e) => {
+                                                handleLinkChange(index, e.target.value, 0)
+                                            }}
+                                            label='LINK NAME'/>
+                                        <Form.Control
+                                            key={"LinkURL" + index}
+                                            className='me-1'
+                                            type='linkURL'
+                                            placeholder='Link URL'
+                                            value={links[index].URL}
+                                            style={{
+                                                width: '75%'
+                                            }}
+                                            onChange={(e) => {
+                                                handleLinkChange(index, e.target.value, 1)
+                                            }}
+                                            label='Link URL'/>
+                                    </Row>
+
+                                );
+                            })
+                        }
+                        <Button
+                            variant='outline-secondary'
+                            className='me-1'
+                            onClick={() => {
+                                inputLinks(true)
+                            }}>
+                            Add Link +
+                        </Button>
+                        <Button
+                            variant='outline-secondary'
+                            onClick={() => {
+                                inputLinks(false)
+                            }}>
+                            Del Link -
+                        </Button>
+                    </Container>
+                </Row>
+                
+            </Container>
+            <Container>
+                <Row>
+                    <Container className='my-2 col-6'>
+                        {
+                            countMembers.map((item, index) => {
+                                return (
+                                    <Row key={index} className="mb-2">
+                                        <Form.Control
+                                            className='me-1'
+                                            type=''
+                                            value={members[index].classOf}
+                                            placeholder='학번'
+                                            style={{
+                                                width: '20%'
+                                            }}
+                                            onChange={(e) => {
+                                                handleMemberChange(index, e.target.value, 1)
+                                            }}
+                                            label='member class'/>
+                                        <Form.Control
+                                            className='me-1'
+                                            type=''
+                                            placeholder='팀원 이름'
+                                            value={members[index].name}
+                                            style={{
+                                                width: '70%'
+                                            }}
+                                            onChange={(e) => {
+                                                handleMemberChange(index, e.target.value, 0)
+                                            }}
+                                            label='팀원 이름'/>
+                                    </Row>
+                                );
+                            })
+                        }
+                        <Button
+                            variant='outline-secondary'
+                            className='me-1'
+                            onClick={() => {
+                                inputMembers(true)
+                            }}>
+                            Add Mem +
+                        </Button>
+                        <Button
+                            variant='outline-secondary'
+                            onClick={() => {
+                                inputMembers(false)
+                            }}>
+                            Del Mem -
+                        </Button>
+                    </Container>
+                    <Container className='my-2 col-6'>
+                        {countOldFiles.map((item, index) => {
+                            return(
+                                <Row key={index} className="mb-2">
+                                    <Row key={index} md='auto' className='my-2' style={{ width: '50%' }}>
+                                        <Button className="" variant='light'>
+                                        <img src="https://img.icons8.com/material-sharp/18/000000/download--v1.png" />
+                                        <a download href={oldFiles[index].URL} target="_blank" className="mx-3" style={{ color: 'black' }}>{oldFiles[index].name}</a>
+                                        </Button>
+                                        <Button variant='danger' onClick={handleDeleteFile}>파일 삭제</Button>
+                                    </Row>                                                  
+                                </Row>
+                                );  
+                            })
+                        }
+                        <Container>
                     {
-                        countLinks.map((item, index) => {
+                        countNewFiles.map((item, index) => {
                             return (
                                 <Row key={index} className="mb-2">
                                     <Form.Control
-                                        key={"LinkName" + index}
+                                        key={"FileName" + index}
+                                        name='File Name'
                                         className='me-1'
-                                        type='linkName'
-                                        value={links[index].name}
-                                        placeholder='Link'
+                                        placeholder='File name'
+                                        value={newFiles[index].name}
                                         style={{
-                                            width: '20%'
+                                            width: '25%'
                                         }}
                                         onChange={(e) => {
-                                            handleLinkNameChange(index, e.target.value)
+                                            handleFilesChange(index, e.target.value, 0);
                                         }}
-                                        label='LINK NAME'/>
+                                        label='File Name'/>
+
                                     <Form.Control
-                                        key={"LinkURL" + index}
+                                        type="file"
                                         className='me-1'
-                                        type='linkURL'
-                                        placeholder='Link URL'
-                                        value={links[index].URL}
+                                        value={newFiles[index].file}
                                         style={{
-                                            width: '75%'
+                                            width: '70%'
                                         }}
                                         onChange={(e) => {
-                                            handleLinkURLChange(index, e.target.value)
-                                        }}
-                                        label='Link URL'/>
+                                            handleFilesChange(index, e.target.files[0], 1);
+                                            console.log(e.target.files[0])
+                                        }}/>
+
                                 </Row>
 
                             );
                         })
                     }
+
                     <Button
                         variant='outline-secondary'
                         className='me-1'
                         onClick={() => {
-                            inputLinks(true)
+                            inputFiles(true);
                         }}>
-                        Add Link +
+                        +
                     </Button>
                     <Button
                         variant='outline-secondary'
                         onClick={() => {
-                            inputLinks(false)
+                            inputFiles(false);
                         }}>
-                        Del Link -
+                        -
                     </Button>
                 </Container>
-            </Row>
-            <Row>
-                
-            </Row>
+
+                    </Container>
+                </Row>
+            </Container>
             <Button className='mt-2 mx-1' onClick={handleUpdateOnClick}>
                 Update
             </Button>

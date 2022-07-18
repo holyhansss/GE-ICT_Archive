@@ -16,6 +16,7 @@ export const COLLECTION_NAMES = [{
 }]
 
 export const SEMESTERS  = [
+    '2022-2',
     '2022-1',
     '2021-2',
     '2021-1',
@@ -29,6 +30,8 @@ export const SEMESTERS  = [
     '2017-1',
     '2016-2',
     '2016-1',
+    '2015-2',
+    '2015-1',
     '-',
 ]
 

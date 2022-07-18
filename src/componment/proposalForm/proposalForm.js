@@ -56,7 +56,7 @@ function ProposalForm() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if(lock == true) return;
+        if(lock === true) return;
         else setLock(true);
         alert('1-2초 가량 기다려 주세요!');
         
