@@ -82,16 +82,16 @@ const Header = () => {
                             </Nav>
                             : professors.includes(auth.currentUser.email)
                                 ? <Nav as='ul'>
-                                   <Link to={{
-                                        pathname: `/professorApprovalpage`,
-                                    }} style={{ textDecoration: 'none', color: 'rgba(255,255,255,.55)' }}> <Nav.Link as='li'>Approval</Nav.Link></Link>
+                                   <Link 
+                                        to={{ pathname: `/professorApprovalpage` }} 
+                                        style={{ textDecoration: 'none', color: 'rgba(255,255,255,.55)' }}> 
+                                        <Nav.Link as='li'>Approval</Nav.Link>
+                                    </Link>
                                     <Nav.Link onClick={handleProposalClick}>Proposal</Nav.Link>
                                     <Nav.Link onClick={handleLogoutClick}>Logout</Nav.Link>
                                 </Nav>
                                 : <Nav>
-                                    <Link to={{
-                                        pathname: `/professorApprovalpage`,
-                                    }} style={{ textDecoration: 'none', color: 'rgba(255,255,255,.55)' }}> <Nav.Link as='li'>Approval</Nav.Link></Link>
+                                    <Nav.Link onClick={handleProposalClick}>Proposal</Nav.Link>
                                     <Nav.Link onClick={handleLogoutClick}>Logout</Nav.Link>
                                 </Nav>
                     }

@@ -1,6 +1,5 @@
 import {React, useState, useEffect} from 'react';
 
-import {Firestore} from 'firebase/firestore';
 import {getFirestore, collection, addDoc} from 'firebase/firestore';
 import {getDownloadURL, getStorage, ref, uploadBytes} from 'firebase/storage';
 import {getAuth} from 'firebase/auth';
@@ -78,14 +77,16 @@ function ProposalForm() {
             //console.log(imageStorageURL); upload files
             for (let i = 0; i < selectedFiles.length; i++) {
                 if (selectedFiles[i].file !== '' && selectedFiles[i].file !== undefined) {
-                    //console.log(selectedFiles[i])
+
                     let filename = selectedFiles[i].fileName;
-                    let storageRef = ref(storage, `${selectedFiles[i].fileName}${currentTime}`);
+                    let filenameTime = `${selectedFiles[i].fileName}${currentTime}`
+                    let storageRef = ref(storage, filenameTime);
                     await uploadBytes(storageRef, selectedFiles[i].file)
                     let URL = await getDownloadURL(storageRef)
                     let newFile = {
                         name: filename,
-                        URL: URL
+                        URL: URL,
+                        storage: filenameTime,
                     }
                     fileURLssss.push(newFile)
                 }
@@ -123,7 +124,8 @@ function ProposalForm() {
             const fileCollectionRef = collection(docRef, 'fileURLs')
             fileURLssss.map((fileURL, index) => addDoc(fileCollectionRef, {
                 name: fileURL.name,
-                URL: fileURL.URL
+                URL: fileURL.URL,
+                storage: fileURL.storage,
             }))
             // Link들 저장
             const LinksCollectionRef = collection(docRef, 'Links')

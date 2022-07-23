@@ -322,8 +322,20 @@ const EditDetail = (props) => {
     const handleCancelOnClick = async () => {
         props.handleEditClick(false);
     }
-    const handleDeleteFile = async (i) => {
-        console.log('jhello' + i)
+    const handleDeleteFile = async (item) => {
+        console.log(item)
+        // // Create a reference to the file to delete
+        // const fileRef = ref(storage, `/${item.storage}`);
+
+        // // Delete the file
+        // deleteObject(fileRef).then(() => {
+        // // File deleted successfully
+        //     console.log("successfully Deleted")
+        // }).catch((error) => {
+        // // Uh-oh, an error occurred!
+        //     console.log(error);
+        // });
+
     }
     // if bool = true: adding
     // else sub
@@ -631,7 +643,11 @@ const EditDetail = (props) => {
                                         <img src="https://img.icons8.com/material-sharp/18/000000/download--v1.png" />
                                         <a download href={oldFiles[index].URL} target="_blank" className="mx-3" style={{ color: 'black' }}>{oldFiles[index].name}</a>
                                         </Button>
-                                        <Button variant='danger' onClick={handleDeleteFile}>파일 삭제</Button>
+                                        <Button variant='danger' 
+                                            onClick={() => {
+                                                //console.log(item)
+                                                handleDeleteFile(item)}
+                                            }>파일 삭제</Button>
                                     </Row>                                                  
                                 </Row>
                                 );  
