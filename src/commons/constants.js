@@ -8,12 +8,12 @@ export const ICT_COURSES = [
     'IDEA CENTER',
 ]
 
-export const COLLECTION_NAMES = [{
-    mainCollection: 'CourseProject',
-    member: 'members',
+export const COLLECTION_NAMES = {
+    mainCollection: 'CourseProjects',
+    members: 'members',
     links: 'Links',
     fileURLs: 'fileURLs',
-}]
+}
 
 export const SEMESTERS  = [
     '2022-2',

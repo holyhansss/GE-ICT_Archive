@@ -6,7 +6,11 @@ import { getFirestore, collection, getDocs, doc, updateDoc, query, addDoc, delet
 import { getAuth } from 'firebase/auth';
 
 import { Container, Form, Image, Tab, Tabs, Button, Row } from 'react-bootstrap';
-import { getStorage, ref, deleteObject } from 'firebase/storage';
+import { getStorage, ref, deleteObject, uploadBytes, getDownloadURL} from 'firebase/storage';
+
+import { COLLECTION_NAMES } from '../../commons/constants';
+import { Unix_timestampConv } from '../../commons/Utils';
+
 
 const DetailPage = () => {
 
@@ -29,7 +33,7 @@ const DetailPage = () => {
     useEffect(() => {
         const FetchContents = async () => {
             const memberData = await getDocs(
-                collection(db, 'CourseProjects', contentInfo.id, "members")
+                collection(db, `${COLLECTION_NAMES['mainCollection']}`, contentInfo.id, "members")
             );
             setMembers(memberData.docs.map((doc, index) => ({
                 ...doc.data(),
@@ -37,14 +41,14 @@ const DetailPage = () => {
                 uid: doc.id
             })));
             const fileData = await getDocs(
-                collection(db, 'CourseProjects', contentInfo.id, "fileURLs")
+                collection(db, `${COLLECTION_NAMES['mainCollection']}`, contentInfo.id, "fileURLs")
             );
             setFiles(fileData.docs.map((doc) => ({
                 ...doc.data(),
                 id: doc.id
             })));
             const linksData = await getDocs(
-                collection(db, 'CourseProjects', contentInfo.id, "Links")
+                collection(db, `${COLLECTION_NAMES['mainCollection']}`, contentInfo.id, "Links")
             );
             setLinks(linksData.docs.map((doc, index) => ({
                 ...doc.data(),
@@ -106,8 +110,6 @@ const DetailPage = () => {
         </Container>
     );
 };
-
-
 
 const ProjectDetail = props => {
 
@@ -250,9 +252,12 @@ const EditDetail = (props) => {
     const [newFiles, setNewFiles] = useState([{
         id: 0,
         name: '',
+        content: null,
+        URL: '',
+        storage: '',
     }]);
     const [oldFiles, setOldFiles] = useState(props.files);
-
+    
     const [links, setLinks] = useState(props.links);
     const [professors, setProfessors] = useState(props.professors);
 
@@ -266,6 +271,11 @@ const EditDetail = (props) => {
     
     const linksCountBeforeChange = props.links.length;
     const membersCountBeforeChange = props.members.length;
+
+
+    useEffect(()=> {
+
+    }, [oldFiles]);
 
     const handleUpdateOnClick = async () => {
         if(!professors.includes(auth.currentUser.email) && !props.contentInfo.owner === auth.currentUser.email){
@@ -282,7 +292,7 @@ const EditDetail = (props) => {
         })
         
         // update links
-        const linkColRef = collection(docRef, "Links");
+        const linkColRef = collection(docRef, COLLECTION_NAMES['links']);
         if(originalLinks !== links){
             for(let i=0; i<linksCountBeforeChange; i++){
                 const linksDocRef = doc(docRef, "Links", originalLinks[i].uid)
@@ -297,7 +307,7 @@ const EditDetail = (props) => {
         }
 
         // update members
-        const memberColRef = collection(docRef, "members");
+        const memberColRef = collection(docRef, COLLECTION_NAMES['members']);
         if(originalMembers !== members){
             for(let i=0; i<membersCountBeforeChange; i++){
                 const membersDocRef = doc(docRef, "members", originalMembers[i].uid)
@@ -311,8 +321,25 @@ const EditDetail = (props) => {
             });
         }
 
-        
+        // update files
+        const timestamp = Unix_timestampConv();
+        const fileColRef = collection(docRef, COLLECTION_NAMES['fileURLs'])
 
+        newFiles.map(async (file, index) => {
+            let uploadFileName = `files/${file.name}_${index}_${timestamp}`;
+            
+            let fileStorageRef = ref(storage, uploadFileName);
+
+            await uploadBytes(fileStorageRef, file.content);
+            // let DownloadURL = 
+            await getDownloadURL(fileStorageRef).then(async (DownloadURL) => {
+                await addDoc(fileColRef, {
+                    name: file.name,
+                    URL: DownloadURL,
+                    storage: `${file.name}_${index}_${timestamp}`
+                });
+            });
+        });
 
         alert('updated!');
 
@@ -322,19 +349,24 @@ const EditDetail = (props) => {
     const handleCancelOnClick = async () => {
         props.handleEditClick(false);
     }
-    const handleDeleteFile = async (item) => {
-        console.log(item)
-        // // Create a reference to the file to delete
-        // const fileRef = ref(storage, `/${item.storage}`);
+    const handleDeleteFile = async (file) => {
+        console.log(file)
 
-        // // Delete the file
-        // deleteObject(fileRef).then(() => {
-        // // File deleted successfully
-        //     console.log("successfully Deleted")
-        // }).catch((error) => {
-        // // Uh-oh, an error occurred!
-        //     console.log(error);
-        // });
+        // Create a reference to the file to delete
+        const fileRef = ref(storage, `files/${file.storage}`);
+
+        // Delete the file
+        await deleteObject(fileRef).then(() => {
+        // File deleted successfully
+            setOldFiles(oldFiles.filter(oldFile => oldFile !== file));
+            console.log("successfully Deleted");
+        }).catch((error) => {
+            // error
+            console.log(error);
+        });
+
+        const deletedFileRef = doc(db, `${COLLECTION_NAMES['mainCollection']}/${props.contentInfo.id}/${COLLECTION_NAMES['fileURLs']}/${file.id}`);
+        await deleteDoc(deletedFileRef);
 
     }
     // if bool = true: adding
@@ -478,6 +510,7 @@ const EditDetail = (props) => {
         }
         console.log(newFiles)
     }
+
     return (
         <Container className=''>
             <Row>

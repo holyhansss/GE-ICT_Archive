@@ -57,9 +57,11 @@ function ProposalForm() {
         e.preventDefault();
         if(lock === true) return;
         else setLock(true);
-        alert('1-2초 가량 기다려 주세요!');
-        
+        if(!selectedImage) {
+            alert('이미지를 선택해주세요!');
+        }
         if (teamName && teamDesc && course && selectedSemester && selectedImage) {
+            alert('1-2초 가량 기다려 주세요!');
             //console.log(teamName, teamDesc, selectedSemester, teamMembers, course)
             const db = getFirestore();
             const storage = getStorage();
@@ -80,7 +82,7 @@ function ProposalForm() {
 
                     let filename = selectedFiles[i].fileName;
                     let filenameTime = `${selectedFiles[i].fileName}${currentTime}`
-                    let storageRef = ref(storage, filenameTime);
+                    let storageRef = ref(storage, `files/${filenameTime}`);
                     await uploadBytes(storageRef, selectedFiles[i].file)
                     let URL = await getDownloadURL(storageRef)
                     let newFile = {
@@ -140,6 +142,8 @@ function ProposalForm() {
             // window.location.reload();
             navigate("/");
         }
+        setLock(false);
+
     }
 
     // control members

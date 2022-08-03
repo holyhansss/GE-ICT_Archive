@@ -1,0 +1,41 @@
+[debug] [2022-07-23T10:34:37.229Z] ----------------------------------------------------------------------
+[debug] [2022-07-23T10:34:37.230Z] Command:       /usr/local/bin/node /opt/homebrew/bin/firebase deploy
+[debug] [2022-07-23T10:34:37.230Z] CLI Version:   11.3.0
+[debug] [2022-07-23T10:34:37.230Z] Platform:      darwin
+[debug] [2022-07-23T10:34:37.230Z] Node Version:  v16.15.1
+[debug] [2022-07-23T10:34:37.233Z] Time:          Sat Jul 23 2022 19:34:37 GMT+0900 (대한민국 표준시)
+[debug] [2022-07-23T10:34:37.234Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2022-07-23T10:34:37.270Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2022-07-23T10:34:37.271Z] > authorizing via signed-in user (mosaic.team.tech@gmail.com)
+[debug] [2022-07-23T10:34:37.271Z] [iam] checking project ge-ict-capstone for permissions ["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update","firebaserules.releases.create","firebaserules.releases.update","firebaserules.rulesets.create"]
+[debug] [2022-07-23T10:34:37.272Z] > refreshing access token with scopes: []
+[debug] [2022-07-23T10:34:37.273Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2022-07-23T10:34:37.273Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2022-07-23T10:34:40.712Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2022-07-23T10:34:40.713Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2022-07-23T10:34:40.762Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/ge-ict-capstone:testIamPermissions [none]
+[debug] [2022-07-23T10:34:40.763Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/ge-ict-capstone:testIamPermissions {"permissions":["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update","firebaserules.releases.create","firebaserules.releases.update","firebaserules.rulesets.create"]}
+[debug] [2022-07-23T10:34:42.880Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/ge-ict-capstone:testIamPermissions 200
+[debug] [2022-07-23T10:34:42.880Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/ge-ict-capstone:testIamPermissions {}
+[debug] [2022-07-23T10:34:42.881Z] [iam] error while checking permissions, command may fail: FirebaseError: Authorization failed. This account is missing the following required permissions on project ge-ict-capstone:
+
+  datastore.indexes.create
+  datastore.indexes.delete
+  datastore.indexes.list
+  datastore.indexes.update
+  firebase.projects.get
+  firebasehosting.sites.update
+  firebaserules.releases.create
+  firebaserules.releases.update
+  firebaserules.rulesets.create
+[debug] [2022-07-23T10:34:42.881Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/ge-ict-capstone [none]
+[debug] [2022-07-23T10:34:44.435Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/ge-ict-capstone 403
+[debug] [2022-07-23T10:34:44.435Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/ge-ict-capstone {"error":{"code":403,"message":"The caller does not have permission","status":"PERMISSION_DENIED"}}
+[debug] [2022-07-23T10:34:44.436Z] HTTP Error: 403, The caller does not have permission
+[debug] [2022-07-23T10:34:44.690Z] FirebaseError: HTTP Error: 403, The caller does not have permission
+    at responseToError (/opt/homebrew/lib/node_modules/firebase-tools/lib/responseToError.js:49:12)
+    at RetryOperation._fn (/opt/homebrew/lib/node_modules/firebase-tools/lib/apiv2.js:287:77)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+[error] 
+[error] Error: Failed to get Firebase project ge-ict-capstone. Please make sure the project exists and your account has permission to access it.
