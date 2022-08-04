@@ -45,7 +45,8 @@ const DetailPage = () => {
             );
             setFiles(fileData.docs.map((doc) => ({
                 ...doc.data(),
-                id: doc.id
+                id: doc.id,
+                deleted: false,
             })));
             const linksData = await getDocs(
                 collection(db, `${COLLECTION_NAMES['mainCollection']}`, contentInfo.id, "Links")
@@ -376,7 +377,7 @@ const EditDetail = (props) => {
                 ? {...oldFile, deleted: true}
                 : oldFile
             ));
-            setCountOldFiles(oldFiles.filter(oldFile => oldFile !== file));
+            //setCountOldFiles(oldFiles.filter(oldFile => oldFile !== file));
             
             alert("successfully Deleted");
             console.log("successfully Deleted");
@@ -696,11 +697,19 @@ const EditDetail = (props) => {
                                         <img src="https://img.icons8.com/material-sharp/18/000000/download--v1.png" />
                                         <a download href={oldFiles[index].URL} target="_blank" className="mx-3" style={{ color: 'black' }}>{oldFiles[index].name}</a>
                                         </Button>
-                                        <Button variant='danger' 
-                                            onClick={() => {
-                                                //console.log(item)
-                                                handleDeleteFile(item)}
-                                            }>파일 삭제</Button>
+                                        {oldFiles[index].deleted === false
+                                            ?<Button variant='danger' 
+                                                onClick={() => {
+                                                    //console.log(item)
+                                                    handleDeleteFile(item)}
+                                                }>파일 삭제</Button>
+                                            :<Button variant='secondary' disabled
+                                                onClick={() => {
+                                                    //console.log(item)
+                                                    handleDeleteFile(item)}
+                                                }>삭제됨</Button>
+
+                                        }
                                     </Row>                                                  
                                 </Row>
                                 );  

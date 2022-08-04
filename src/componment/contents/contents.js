@@ -37,38 +37,31 @@ const Contents = () => {
 
 
     const getFirestContents = async () => {
-        //setCourse(selectedCourse)
-        // console.log(content.length)
         setContent([]);
-        // if (true) {
-            // console.log(content)
-            // console.log('get first contents')
-            let q = await query(
-                collection(db, 'CourseProjects'),
-                where('course', '==', selectedCourse),
-                where('approved', '==', true),
-                limit(9),
-                orderBy('createdAt', 'desc')
-            )
-            await getDocs(q).then((snapshot) => {
-                setContent((contents) => {
-                    const arr = [...contents]
-                    snapshot.forEach((doc) => {
-                        arr.push({
-                            ...doc.data(),
-                            id: doc.id
-                        })
+        let q = await query(
+            collection(db, 'CourseProjects'),
+            where('course', '==', selectedCourse),
+            where('approved', '==', true),
+            limit(9),
+            orderBy('createdAt', 'desc')
+        )
+        await getDocs(q).then((snapshot) => {
+            setContent((contents) => {
+                const arr = [...contents]
+                snapshot.forEach((doc) => {
+                    arr.push({
+                        ...doc.data(),
+                        id: doc.id
                     })
-                    return arr
                 })
-                if (snapshot.docs.length === 0) {
-                    setLastVisible(-1)
-                } else {
-                    setLastVisible(snapshot.docs[snapshot.docs.length - 1])
-                }
+                return arr
             })
-        // }
-
+            if (snapshot.docs.length === 0) {
+                setLastVisible(-1)
+            } else {
+                setLastVisible(snapshot.docs[snapshot.docs.length - 1])
+            }
+        })
     }
 
     const getNextContents = async () => {
@@ -150,8 +143,6 @@ const Contents = () => {
 
     useEffect(() => {}, [content])
     useEffect(() => {}, [course])
-
-    // useEffect(() => {     console.log(selectedCourse); }, [selectedCourse])
 
     useBottomScrollListener(getNextContents)
 
