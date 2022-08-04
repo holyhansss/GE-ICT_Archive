@@ -253,8 +253,7 @@ const EditDetail = (props) => {
         id: 0,
         name: '',
         content: null,
-        URL: '',
-        storage: '',
+        deleted: false,
     }]);
     const [oldFiles, setOldFiles] = useState(props.files);
     
@@ -269,9 +268,12 @@ const EditDetail = (props) => {
     const [originalMembers, setOriginalMembers] = useState(props.members);
     const [originalLinks, setOriginalLinks] = useState(props.links);
     
+    const [lock, setLock] = useState(false);
+
     const linksCountBeforeChange = props.links.length;
     const membersCountBeforeChange = props.members.length;
 
+    
 
     useEffect(()=> {
 
@@ -282,8 +284,11 @@ const EditDetail = (props) => {
             alert("only authorized user can update states");
             return 0;
         }
+        
+        if(lock == true) return;
+        else setLock(true);
 
-        const docRef = doc(db, "CourseProjects", props.contentInfo.id);
+        const docRef = doc(db, COLLECTION_NAMES['mainCollection'], props.contentInfo.id);
 
         await updateDoc(docRef, {
             "teamName": teamName,
@@ -306,7 +311,7 @@ const EditDetail = (props) => {
             });
         }
 
-        // update members
+        // update members   
         const memberColRef = collection(docRef, COLLECTION_NAMES['members']);
         if(originalMembers !== members){
             for(let i=0; i<membersCountBeforeChange; i++){
@@ -326,17 +331,19 @@ const EditDetail = (props) => {
         const fileColRef = collection(docRef, COLLECTION_NAMES['fileURLs'])
 
         newFiles.map(async (file, index) => {
-            let uploadFileName = `files/${file.name}_${index}_${timestamp}`;
-            
-            let fileStorageRef = ref(storage, uploadFileName);
+            let uploadFileName = `${file.name}_${props.contentInfo.course}_${teamName}_${index}_${timestamp}`;
+            uploadFileName = uploadFileName.replace(/\//g,"");
+
+            console.log(uploadFileName)
+            let uploadFilePath = `files/${props.contentInfo.course}/${uploadFileName}`;
+            let fileStorageRef = ref(storage, uploadFilePath);
 
             await uploadBytes(fileStorageRef, file.content);
-            // let DownloadURL = 
             await getDownloadURL(fileStorageRef).then(async (DownloadURL) => {
                 await addDoc(fileColRef, {
                     name: file.name,
                     URL: DownloadURL,
-                    storage: `${file.name}_${index}_${timestamp}`
+                    storage: uploadFileName,
                 });
             });
         });
@@ -344,31 +351,42 @@ const EditDetail = (props) => {
         alert('updated!');
 
         props.handleEditClick(false);
+        setLock(false)
         navigate("/");
+
     }
     const handleCancelOnClick = async () => {
         props.handleEditClick(false);
     }
     const handleDeleteFile = async (file) => {
-        console.log(file)
+
+        const deleteApprove = window.confirm(`"${file.name}"을 삭제하시겠습니까?`);
+        if(deleteApprove === false) return;
 
         // Create a reference to the file to delete
-        const fileRef = ref(storage, `files/${file.storage}`);
+        const fileRef = ref(storage, `files/${props.contentInfo.course}/${file.storage}`);
+        const deletedFileRef = doc(db, `${COLLECTION_NAMES['mainCollection']}/${props.contentInfo.id}/${COLLECTION_NAMES['fileURLs']}/${file.id}`);
 
         // Delete the file
         await deleteObject(fileRef).then(() => {
-        // File deleted successfully
-            setOldFiles(oldFiles.filter(oldFile => oldFile !== file));
+            // File deleted successfully
+            deleteDoc(deletedFileRef);
+            setOldFiles(oldFiles.map((oldFile) => 
+            oldFile === file
+                ? {...oldFile, deleted: true}
+                : oldFile
+            ));
+            setCountOldFiles(oldFiles.filter(oldFile => oldFile !== file));
+            
+            alert("successfully Deleted");
             console.log("successfully Deleted");
         }).catch((error) => {
             // error
+            alert("error");
             console.log(error);
         });
-
-        const deletedFileRef = doc(db, `${COLLECTION_NAMES['mainCollection']}/${props.contentInfo.id}/${COLLECTION_NAMES['fileURLs']}/${file.id}`);
-        await deleteDoc(deletedFileRef);
-
     }
+
     // if bool = true: adding
     // else sub
     const inputLinks = (bool) => {
@@ -453,6 +471,8 @@ const EditDetail = (props) => {
         const newFile = {
             id: newFiles.length,
             name: '',
+            deleted: false,
+
         }
         setNewFiles(newFiles.concat(newFile))
     }
@@ -492,7 +512,7 @@ const EditDetail = (props) => {
                     : member
             ));
         }
-        console.log(members);   
+        //console.log(members);   
     }
     const handleFilesChange = (targetId, content, contentId) => {
         if(contentId === 0){
@@ -508,7 +528,7 @@ const EditDetail = (props) => {
                     : file_
             ));
         }
-        console.log(newFiles)
+        // console.log(newFiles)
     }
 
     return (
@@ -714,7 +734,6 @@ const EditDetail = (props) => {
                                         }}
                                         onChange={(e) => {
                                             handleFilesChange(index, e.target.files[0], 1);
-                                            console.log(e.target.files[0])
                                         }}/>
 
                                 </Row>

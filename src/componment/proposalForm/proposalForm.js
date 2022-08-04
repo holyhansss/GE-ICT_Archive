@@ -9,7 +9,7 @@ import {useNavigate} from 'react-router-dom';
 import "@pathofdev/react-tag-input/build/index.css";
 import {Form, Button, Container, Row} from "react-bootstrap";
 
-import {ICT_COURSES, SEMESTERS} from '../../commons/constants';
+import {COLLECTION_NAMES, ICT_COURSES, SEMESTERS} from '../../commons/constants';
 
 function ProposalForm() {
 
@@ -81,20 +81,23 @@ function ProposalForm() {
                 if (selectedFiles[i].file !== '' && selectedFiles[i].file !== undefined) {
 
                     let filename = selectedFiles[i].fileName;
-                    let filenameTime = `${selectedFiles[i].fileName}${currentTime}`
-                    let storageRef = ref(storage, `files/${filenameTime}`);
+
+                    let uploadFileName = `${filename}_${course}_${teamName}_${i}_${currentTime}`;
+                    uploadFileName = uploadFileName.replace(/\//g,"");
+
+                    let storageRef = ref(storage, `files/${course}/${uploadFileName}`);
                     await uploadBytes(storageRef, selectedFiles[i].file)
                     let URL = await getDownloadURL(storageRef)
                     let newFile = {
                         name: filename,
                         URL: URL,
-                        storage: filenameTime,
+                        storage: uploadFileName,
                     }
                     fileURLssss.push(newFile)
                 }
             }
 
-            const docRef = await addDoc(collection(db, 'CourseProjects'), {
+            const docRef = await addDoc(collection(db, COLLECTION_NAMES['mainCollection']), {
                 teamName: teamName,
                 project_description: teamDesc,
                 semester: selectedSemester,
