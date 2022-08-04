@@ -25,13 +25,16 @@ const Contents = () => {
 
     const db = getFirestore();
     const auth = getAuth();
+    const navigate = useNavigate();
+
     const [loading, setLoading] = useState(true);
     const [content, setContent] = useState([]);
     const [course, setCourse] = useState('제품 기획 및 개발')
     const [selectedCourse, setSelectedCourse] = useState('제품 기획 및 개발');
     const [lastVisible, setLastVisible] = useState(0);
     const [searchKeyword, setSearchKeyword] = useState('');
-    const navigate = useNavigate();
+    const [lock, setLock] = useState(false);
+
 
     const getFirestContents = async () => {
         //setCourse(selectedCourse)
@@ -47,7 +50,7 @@ const Contents = () => {
                 limit(9),
                 orderBy('createdAt', 'desc')
             )
-            getDocs(q).then((snapshot) => {
+            await getDocs(q).then((snapshot) => {
                 setContent((contents) => {
                     const arr = [...contents]
                     snapshot.forEach((doc) => {
@@ -68,25 +71,30 @@ const Contents = () => {
 
     }
 
-    const getNextContents = () => {
+    const getNextContents = async () => {
+        if(lock) return;
+        else setLock(true);
+
         let q;
         // orderBy와 startAfter은 같아야함
         // https://dev.to/hadi/infinite-scroll-in-firebase-firestore-and-react-js-55g3
+        
+        console.log('heheh')
         if (lastVisible === -1) {
-            return
+            return;
         } else if (lastVisible) {
-            q = query(
+            q = await query(
                 collection(db, 'CourseProjects'),
                 where('course', '==', selectedCourse),
                 where('approved', '==', true),
                 limit(6),
                 orderBy('createdAt', 'desc'),
                 startAfter(lastVisible)
-            )
+            );
         }
 
         if (lastVisible !== -1 && q !== undefined) {
-            getDocs(q).then((snapshot) => {
+            await getDocs(q).then((snapshot) => {
                 setContent((contents) => {
                     const arr = [...contents]
 
@@ -105,7 +113,7 @@ const Contents = () => {
                 }
             })
         }
-
+        setLock(false)
     }
     const getNewCourseContents = async () => {
         if (selectedCourse !== course) {
@@ -114,7 +122,6 @@ const Contents = () => {
             setLastVisible(0);
             getFirestContents()
             console.log(selectedCourse, course)
-
         }
 
     }
