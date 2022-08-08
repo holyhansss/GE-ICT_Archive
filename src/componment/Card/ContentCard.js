@@ -2,10 +2,13 @@ import React from 'react';
 
 import { Card } from 'react-bootstrap';
 
+
+// 웹사이트에서 Content를 보여줄때 사용되는 기본적인 Card입니다.
+// props: doc
 const ContentCard = (props) => {
 
     const doc = props.doc;
-    
+
     return (
         <Card>
             <Card.Img variant="top" src={doc.image_url} style={{height: '270px'}}/>

@@ -2,9 +2,10 @@ import React from 'react';
 
 import {Link} from "react-router-dom";
 
-import { Card } from 'react-bootstrap';
 import ContentCard from './ContentCard';
 
+
+// ContentCard + 카드 클릭시 path로 이동
 const LinkedContentCard = (props) => {
 
     const doc = props.doc;
